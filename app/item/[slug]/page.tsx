@@ -51,6 +51,9 @@ export default function ItemPage() {
           <div className="p-8 bg-gradient-to-r from-blue-50 to-indigo-50 border-b">
             <div className="flex items-center justify-between">
               <h1 className="text-4xl font-bold text-gray-900 capitalize">{slug.replace(/-/g, ' ')}</h1>
+              {specs['Image URL'] && (
+                <img src={specs['Image URL']} alt={slug} className="mt-4 w-64 h-64 object-cover rounded-lg shadow-md mx-auto" />
+              )}
               <div className={`flex items-center space-x-2 px-4 py-2 rounded-lg ${
                 overallTrend >= 0 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
               }`}>
