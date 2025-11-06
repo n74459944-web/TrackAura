@@ -28,6 +28,7 @@ export default function Home() {
       }
       setPrice(data.currentPrice);
       setHistory(data.history);
+      window.location.href = `/item/${data.item.toLowerCase().replace(/\s+/g, '-')}`;
     } catch (err) {
       setError('Oops—network hiccup. Try again?');
     } finally {
