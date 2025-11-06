@@ -9,40 +9,26 @@ export default function Home() {
   const [category, setCategory] = useState(''); // For future category filtering
 
   const handleSearch = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!item) return;
-    
-    // TODO: Real API call – e.g., fetch(`/api/track/${encodeURIComponent(item)}`)
-    // For now, mock with item-specific data
-    let mockPrice: number;
-    let mockHistory: { date: string; price: number }[];
-    
-    if (item.toLowerCase().includes('bitcoin')) {
-      mockPrice = 67500; // Hypothetical 2025 value
-      mockHistory = [
-        { date: '2024-01', price: 45000 },
-        { date: '2024-06', price: 62000 },
-        { date: '2025-01', price: 67500 },
-        { date: '2025-11', price: 71000 }, // Uptrend!
-      ];
-    } else if (item.toLowerCase().includes('iphone')) {
-      mockPrice = 799;
-      mockHistory = [
-        { date: '2023-11', price: 999 }, // Launch
-        { date: '2024-06', price: 899 },
-        { date: '2025-06', price: 799 },
-      ];
-    } else {
-      mockPrice = Math.floor(Math.random() * 1000) + 100;
-      mockHistory = Array.from({ length: 6 }, (_, i) => ({
-        date: `2025-${String(1 + i).padStart(2, '0')}`,
-        price: mockPrice + (i - 3) * 50, // Simple trend
-      }));
+  e.preventDefault();
+  if (!item) return;
+
+  try {
+    const response = await fetch('/api/track', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ item }),
+    });
+    const data = await response.json();
+    if (data.error) {
+      alert(data.error); // TODO: Better UX toast
+      return;
     }
-    
-    setPrice(mockPrice);
-    setHistory(mockHistory);
-  };
+    setPrice(data.currentPrice);
+    setHistory(data.history);
+  } catch (err) {
+    console.error('Search error:', err);
+  }
+};
 
   // Mock categories for teaser
   const categories = [
