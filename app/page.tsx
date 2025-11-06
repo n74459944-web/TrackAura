@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { Search, TrendingUp, AlertTriangle } from 'lucide-react'; // npm i lucide-react
+import Link from 'next/link';
 
 export default function Home() {
   const [item, setItem] = useState('');
@@ -28,6 +29,7 @@ export default function Home() {
       }
       setPrice(data.currentPrice);
       setHistory(data.history);
+      // Redirect to item page for full specs & chart
       window.location.href = `/item/${data.item.toLowerCase().replace(/\s+/g, '-')}`;
     } catch (err) {
       setError('Oops—network hiccup. Try again?');
@@ -36,7 +38,7 @@ export default function Home() {
     }
   };
 
-  // Mock categories with richer data
+  // Categories with links to dynamic grids
   const categories = [
     { name: 'Electronics', img: 'https://source.unsplash.com/400x300/?electronics', items: 15000, trend: '+8%' },
     { name: 'Crypto', img: 'https://source.unsplash.com/400x300/?bitcoin', items: 5000, trend: '+22%' },
@@ -44,9 +46,9 @@ export default function Home() {
     { name: 'Stocks', img: 'https://source.unsplash.com/400x300/?stock-market', items: 8000, trend: '+15%' },
   ];
 
-  // Calc overall trend for display
+  // Calc overall trend for teaser display
   const overallTrend = history.length > 1 ? 
-    ((history[history.length - 1].price - history[0].price) / history[0].price * 100).toFixed(1) : 0;
+    Number(((history[history.length - 1].price - history[0].price) / history[0].price * 100).toFixed(1)) : 0;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
@@ -57,8 +59,8 @@ export default function Home() {
             TrackAura
           </h1>
           <div className="hidden md:flex items-center space-x-4 text-sm text-gray-500">
-            <a href="#categories" className="hover:text-blue-600 transition">Categories</a>
-            <a href="#" className="hover:text-blue-600 transition">About</a>
+            <Link href="#categories" className="hover:text-blue-600 transition">Categories</Link>
+            <Link href="#" className="hover:text-blue-600 transition">About</Link>
           </div>
         </div>
       </header>
@@ -98,9 +100,9 @@ export default function Home() {
           )}
         </form>
 
-        {/* Results: Enhanced Card */}
+        {/* Results Teaser (Quick Flash Before Redirect) */}
         {price && (
-          <div className="w-full max-w-4xl bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
+          <div className="w-full max-w-4xl bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden mb-8">
             <div className="p-8 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-200">
               <div className="flex items-center justify-between">
                 <h3 className="text-3xl font-bold text-gray-900">Current Value: ${price.toLocaleString()}</h3>
@@ -111,7 +113,7 @@ export default function Home() {
                   <span>{overallTrend >= 0 ? '+' : ''}{overallTrend}% Trend</span>
                 </div>
               </div>
-              <p className="text-gray-600 mt-1">As of today—powered by live markets.</p>
+              <p className="text-gray-600 mt-1">As of today—powered by live markets. Redirecting to full page...</p>
             </div>
             
             {/* Chart: Framed & Responsive */}
@@ -137,35 +139,33 @@ export default function Home() {
         )}
 
         {/* Categories: Hover-Ready Grid */}
-        {!price && (
-          <section id="categories" className="w-full mt-16">
-            <h3 className="text-3xl font-bold text-center text-gray-900 mb-8">Explore Categories</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {categories.map((cat, idx) => (
-                <div
-                  key={idx}
-                  className="group cursor-pointer bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-2xl hover:scale-105 transition-all duration-300 border border-gray-200"
-                  onClick={() => setItem(cat.name)} // Quick search trigger
-                >
-                  <div className="relative h-48 overflow-hidden">
-                    <img src={cat.img} alt={cat.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
-                  </div>
-                  <div className="p-6">
-                    <h4 className="text-xl font-semibold text-gray-900 mb-2">{cat.name}</h4>
-                    <p className="text-gray-600 mb-2">{cat.items.toLocaleString()} items tracked</p>
-                    <div className={`text-sm font-medium flex items-center ${
-                      cat.trend.startsWith('+') ? 'text-green-600' : 'text-red-600'
-                    }`}>
-                      <TrendingUp className={`w-4 h-4 mr-1 ${cat.trend.startsWith('+') ? '' : 'rotate-180'}`} />
-                      {cat.trend}
-                    </div>
+        <section id="categories" className="w-full mt-16">
+          <h3 className="text-3xl font-bold text-center text-gray-900 mb-8">Explore Categories</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {categories.map((cat, idx) => (
+              <Link 
+                key={idx} 
+                href={`/categories/${cat.name.toLowerCase()}`}
+                className="group cursor-pointer bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-2xl hover:scale-105 transition-all duration-300 border border-gray-200"
+              >
+                <div className="relative h-48 overflow-hidden">
+                  <img src={cat.img} alt={cat.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+                </div>
+                <div className="p-6">
+                  <h4 className="text-xl font-semibold text-gray-900 mb-2">{cat.name}</h4>
+                  <p className="text-gray-600 mb-2">{cat.items.toLocaleString()} items tracked</p>
+                  <div className={`text-sm font-medium flex items-center ${
+                    cat.trend.startsWith('+') ? 'text-green-600' : 'text-red-600'
+                  }`}>
+                    <TrendingUp className={`w-4 h-4 mr-1 ${cat.trend.startsWith('+') ? '' : 'rotate-180'}`} />
+                    {cat.trend}
                   </div>
                 </div>
-              ))}
-            </div>
-          </section>
-        )}
+              </Link>
+            ))}
+          </div>
+        </section>
       </main>
     </div>
   );
