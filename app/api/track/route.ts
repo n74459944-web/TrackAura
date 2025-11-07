@@ -34,13 +34,13 @@ export async function POST(request: NextRequest) {
       }));
     } else {
       // Mock for goods (expand to eBay Browse API later—no auth hassle)
+      specs = {}; // Flexible indexed type
       let mockPrice = 0;
-      let mockSpecs = { 'Fallback': 'Using estimates—real data incoming' };
       let mockHistory = [];
 
       if (lowerItem.includes('iphone')) {
         mockPrice = 799;
-        mockSpecs = {
+        specs = {
           'Brand': 'Apple',
           'Condition': 'New',
           'Storage': '128GB',
@@ -55,7 +55,7 @@ export async function POST(request: NextRequest) {
         ];
       } else if (lowerItem.includes('rolex')) {
         mockPrice = 8500;
-        mockSpecs = {
+        specs = {
           'Model': 'Submariner',
           'Material': 'Stainless Steel',
           'Condition': 'Excellent',
@@ -69,7 +69,7 @@ export async function POST(request: NextRequest) {
         ];
       } else if (lowerItem.includes('airpods')) {
         mockPrice = 199;
-        mockSpecs = {
+        specs = {
           'Brand': 'Apple',
           'Type': 'Pro (2nd Gen)',
           'Noise Canceling': 'Active',
@@ -84,7 +84,7 @@ export async function POST(request: NextRequest) {
       } else {
         // Generic mock
         mockPrice = Math.floor(Math.random() * 1000) + 100;
-        mockSpecs = { 'Category': 'General', 'Status': 'Tracked' };
+        specs = { 'Category': 'General', 'Status': 'Tracked' };
         mockHistory = Array.from({ length: 30 }, (_, i) => ({
           date: new Date(Date.now() - i * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
           price: mockPrice + (Math.random() - 0.5) * 200,
@@ -93,7 +93,6 @@ export async function POST(request: NextRequest) {
 
       currentPrice = mockPrice;
       history = mockHistory;
-      specs = mockSpecs;
     }
 
     return NextResponse.json({ currentPrice, history, specs, item });
