@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import axios from 'axios';
-import { google } from 'googleapis';
 
 export async function POST(request: NextRequest) {
   try {
@@ -34,51 +33,67 @@ export async function POST(request: NextRequest) {
         price: Math.round(price),
       }));
     } else {
-      // Google Shopping for physical/digital goods
-      try {
-        const shopping = google.shopping({ version: 'v2.1', auth: process.env.GOOGLE_SHOPPING_KEY });
-        const res = await shopping.products.list({
-          merchantId: 'online:en:US',
-          q: item,
-          maxResults: 5,
-          country: 'US',
-        });
+      // Mock for goods (expand to eBay Browse API later—no auth hassle)
+      let mockPrice = 0;
+      let mockSpecs = { 'Fallback': 'Using estimates—real data incoming' };
+      let mockHistory = [];
 
-        const products = res.data.resources || [];
-        if (products.length > 0) {
-          const prices = products.map((p: any) => parseFloat(p.price?.value || '0')).filter(p => !isNaN(p));
-          currentPrice = prices.length > 0 ? Math.round(prices.reduce((a: number, b: number) => a + b, 0) / prices.length) : null;
-          
-          const firstProduct = products[0];
-          specs = {
-            'Title': firstProduct.title || 'N/A',
-            'Brand': firstProduct.brand || 'N/A',
-            'Condition': firstProduct.condition || 'New',
-            'Availability': firstProduct.availability || 'In Stock',
-            'Recent Listings': `${products.length} matches`,
-            'Image URL': firstProduct.imageLink || ''
-          };
-
-          // Historical: Simulate 30-day trend (add CamelCamel for real later)
-          const basePrice = currentPrice || Math.floor(Math.random() * 1000) + 100;
-          history = Array.from({ length: 30 }, (_, i) => ({
-            date: new Date(Date.now() - i * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-            price: Math.round(basePrice * (1 + (Math.random() - 0.5) * 0.1 * i / 30)),
-          }));
-        }
-      } catch (gError) {
-        console.error('Google API Error:', gError);
-      }
-
-      // Fallback mock if no data
-      if (!currentPrice) {
-        currentPrice = Math.floor(Math.random() * 1000) + 100;
-        specs = { 'Fallback': `${item} estimates—refine search?` };
-        history = Array.from({ length: 7 }, (_, i) => ({
-          date: new Date(Date.now() - i * 86400000).toISOString().split('T')[0],
-          price: currentPrice + (i - 3) * 20,
+      if (lowerItem.includes('iphone')) {
+        mockPrice = 799;
+        mockSpecs = {
+          'Brand': 'Apple',
+          'Condition': 'New',
+          'Storage': '128GB',
+          'Screen': '6.1-inch OLED',
+          'Battery': '3349 mAh',
+          'Release': 'Sep 2023'
+        };
+        mockHistory = [
+          { date: '2025-09', price: 999 },
+          { date: '2025-10', price: 899 },
+          { date: '2025-11', price: 799 },
+        ];
+      } else if (lowerItem.includes('rolex')) {
+        mockPrice = 8500;
+        mockSpecs = {
+          'Model': 'Submariner',
+          'Material': 'Stainless Steel',
+          'Condition': 'Excellent',
+          'Year': 'Vintage 1980s',
+          'Water Resistance': '300m'
+        };
+        mockHistory = [
+          { date: '2025-08', price: 8200 },
+          { date: '2025-09', price: 8350 },
+          { date: '2025-11', price: 8500 },
+        ];
+      } else if (lowerItem.includes('airpods')) {
+        mockPrice = 199;
+        mockSpecs = {
+          'Brand': 'Apple',
+          'Type': 'Pro (2nd Gen)',
+          'Noise Canceling': 'Active',
+          'Battery': '30 hrs total',
+          'Color': 'White'
+        };
+        mockHistory = [
+          { date: '2025-09', price: 249 },
+          { date: '2025-10', price: 229 },
+          { date: '2025-11', price: 199 },
+        ];
+      } else {
+        // Generic mock
+        mockPrice = Math.floor(Math.random() * 1000) + 100;
+        mockSpecs = { 'Category': 'General', 'Status': 'Tracked' };
+        mockHistory = Array.from({ length: 30 }, (_, i) => ({
+          date: new Date(Date.now() - i * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+          price: mockPrice + (Math.random() - 0.5) * 200,
         }));
       }
+
+      currentPrice = mockPrice;
+      history = mockHistory;
+      specs = mockSpecs;
     }
 
     return NextResponse.json({ currentPrice, history, specs, item });
@@ -98,42 +113,41 @@ export async function GET(request: NextRequest) {
   const lowerCat = category.toLowerCase();
 
   if (lowerCat === 'crypto') {
-    // Real CoinGecko top 10 (add &per_page=${pageSize} for pagination later)
+    // Real CoinGecko top 10
     const { data } = await axios.get('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=10&page=1');
     items = data.map((coin: any) => ({
       name: coin.name,
       price: Math.round(coin.current_price),
       trend: `${coin.price_change_percentage_24h?.toFixed(1) || 0}%`,
-      img: `https://source.unsplash.com/200x200/?${coin.symbol}`,
+      img: `https://source.unsplash.com/200x200/?${coin.symbol}-crypto`,
     }));
   } else if (lowerCat === 'electronics') {
-    // Mock array—swap with Google loop for live
     items = [
-      { name: 'iPhone 15', price: 799, trend: '+5%', img: 'https://source.unsplash.com/200x200/?iphone' },
-      { name: 'MacBook Pro', price: 1999, trend: '-2%', img: 'https://source.unsplash.com/200x200/?macbook' },
-      { name: 'AirPods Pro', price: 199, trend: '+12%', img: 'https://source.unsplash.com/200x200/?airpods' },
-      { name: 'Samsung Galaxy S24', price: 899, trend: '+3%', img: 'https://source.unsplash.com/200x200/?galaxy' },
-      { name: 'Google Pixel 8', price: 699, trend: '-1%', img: 'https://source.unsplash.com/200x200/?pixel' },
-      { name: 'Sony WH-1000XM5', price: 399, trend: '+7%', img: 'https://source.unsplash.com/200x200/?headphones' },
-      { name: 'Nintendo Switch', price: 299, trend: '+4%', img: 'https://source.unsplash.com/200x200/?nintendo' },
-      { name: 'Kindle Paperwhite', price: 149, trend: '-3%', img: 'https://source.unsplash.com/200x200/?kindle' },
+      { name: 'iPhone 15', price: 799, trend: '+5%', img: 'https://source.unsplash.com/200x200/?iphone-15' },
+      { name: 'MacBook Pro', price: 1999, trend: '-2%', img: 'https://source.unsplash.com/200x200/?macbook-pro' },
+      { name: 'AirPods Pro', price: 199, trend: '+12%', img: 'https://source.unsplash.com/200x200/?airpods-pro' },
+      { name: 'Samsung Galaxy S24', price: 899, trend: '+3%', img: 'https://source.unsplash.com/200x200/?galaxy-s24' },
+      { name: 'Google Pixel 8', price: 699, trend: '-1%', img: 'https://source.unsplash.com/200x200/?pixel-8' },
+      { name: 'Sony WH-1000XM5', price: 399, trend: '+7%', img: 'https://source.unsplash.com/200x200/?sony-headphones' },
+      { name: 'Nintendo Switch', price: 299, trend: '+4%', img: 'https://source.unsplash.com/200x200/?nintendo-switch' },
+      { name: 'Kindle Paperwhite', price: 149, trend: '-3%', img: 'https://source.unsplash.com/200x200/?kindle-paperwhite' },
     ];
   } else if (lowerCat === 'collectibles') {
     items = [
-      { name: 'Pokémon Charizard Card', price: 250, trend: '+15%', img: 'https://source.unsplash.com/200x200/?charizard-pokemon-card' || 'https://via.placeholder.com/200x200?text=Card' },
-      { name: 'Vintage Rolex Submariner', price: 8500, trend: '+8%', img: 'https://source.unsplash.com/200x200/?rolex-submariner-watch' || 'https://via.placeholder.com/200x200?text=Watch' },
-      { name: '1980s Air Jordan 1', price: 1200, trend: '+20%', img: 'https://source.unsplash.com/200x200/?air-jordan-1-sneakers' || 'https://via.placeholder.com/200x200?text=Sneakers' },
-      { name: 'First Edition Harry Potter', price: 4500, trend: '+12%', img: 'https://source.unsplash.com/200x200/?harry-potter-book' || 'https://via.placeholder.com/200x200?text=Book' },
-      { name: 'LeBron James Rookie Card', price: 1800, trend: '+25%', img: 'https://source.unsplash.com/200x200/?lebron-james-basketball-card' || 'https://via.placeholder.com/200x200?text=Card' },
+      { name: 'Pokémon Charizard Card', price: 250, trend: '+15%', img: 'https://source.unsplash.com/200x200/?charizard-pokemon-card' },
+      { name: 'Vintage Rolex Submariner', price: 8500, trend: '+8%', img: 'https://source.unsplash.com/200x200/?rolex-submariner-watch' },
+      { name: '1980s Air Jordan 1', price: 1200, trend: '+20%', img: 'https://source.unsplash.com/200x200/?air-jordan-1-sneakers' },
+      { name: 'First Edition Harry Potter', price: 4500, trend: '+12%', img: 'https://source.unsplash.com/200x200/?harry-potter-book' },
+      { name: 'LeBron James Rookie Card', price: 1800, trend: '+25%', img: 'https://source.unsplash.com/200x200/?lebron-james-basketball-card' },
     ];
   } else if (lowerCat === 'stocks') {
     // Mock; Alpha Vantage free key for real TSLA/AAPL later
     items = [
-      { name: 'Tesla (TSLA)', price: 250, trend: '+10%', img: 'https://source.unsplash.com/200x200/?tesla' },
-      { name: 'Apple (AAPL)', price: 220, trend: '-4%', img: 'https://source.unsplash.com/200x200/?apple' },
-      { name: 'NVIDIA (NVDA)', price: 120, trend: '+25%', img: 'https://source.unsplash.com/200x200/?nvidia' },
-      { name: 'Amazon (AMZN)', price: 185, trend: '+6%', img: 'https://source.unsplash.com/200x200/?amazon' },
-      { name: 'Google (GOOGL)', price: 165, trend: '+2%', img: 'https://source.unsplash.com/200x200/?google' },
+      { name: 'Tesla (TSLA)', price: 250, trend: '+10%', img: 'https://source.unsplash.com/200x200/?tesla-stock' },
+      { name: 'Apple (AAPL)', price: 220, trend: '-4%', img: 'https://source.unsplash.com/200x200/?apple-stock' },
+      { name: 'NVIDIA (NVDA)', price: 120, trend: '+25%', img: 'https://source.unsplash.com/200x200/?nvidia-stock' },
+      { name: 'Amazon (AMZN)', price: 185, trend: '+6%', img: 'https://source.unsplash.com/200x200/?amazon-stock' },
+      { name: 'Google (GOOGL)', price: 165, trend: '+2%', img: 'https://source.unsplash.com/200x200/?google-stock' },
     ];
   } else {
     items = []; // Unknown cat fallback
