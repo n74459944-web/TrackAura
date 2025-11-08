@@ -1,7 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
-import { Search, TrendingUp, ChevronDown } from 'lucide-react';
+import { Search, TrendingUp, ChevronDown, Menu } from 'lucide-react';  // Add Menu for hamburger
 import Auth from '@/components/Auth';
 
 interface Category {
@@ -15,6 +15,7 @@ export default function HomePage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [categories, setCategories] = useState<Category[]>([]);
   const [expandedCats, setExpandedCats] = useState<Set<string>>(new Set());
+  const [showSidebar, setShowSidebar] = useState(false);  // NEW: Mobile toggle
 
   useEffect(() => {
     fetch('/data/categories.json')
@@ -42,18 +43,39 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
-      <div className="max-w-7xl mx-auto px-4 py-12 grid grid-cols-1 lg:grid-cols-4 gap-8">
+      {/* Mobile Hamburger - NEW */}
+      <button
+        onClick={() => setShowSidebar(true)}
+        className="fixed top-4 left-4 lg:hidden z-50 bg-white p-2 rounded-lg shadow-md"
+      >
+        <Menu className="w-6 h-6 text-gray-700" />
+      </button>
+
+      <div className="max-w-7xl mx-auto px-2 lg:px-4 py-12 grid grid-cols-1 lg:grid-cols-4 gap-8">  {/* FIXED: px-2 for left push */}
         
         {/* Left Sidebar: Categories Column */}
-        <aside className="hidden lg:block col-span-1 bg-white rounded-xl shadow-md p-6 h-fit sticky top-12">
+        <aside 
+          className={`lg:col-span-1 bg-white rounded-xl shadow-md p-6 h-fit sticky top-12 transition-transform duration-300 ease-in-out ${
+            showSidebar ? 'fixed inset-y-0 left-0 z-40 w-64 transform translate-x-0' : 'lg:block -translate-x-full lg:translate-x-0'
+          }`}  // FIXED: Mobile slide-in, always block on lg
+        >
+          {/* Mobile Backdrop - NEW */}
+          {showSidebar && (
+            <div 
+              className="fixed inset-0 bg-black bg-opacity-50 lg:hidden z-30"
+              onClick={() => setShowSidebar(false)}
+            />
+          )}
+          
           <h2 className="text-xl font-bold mb-6 text-gray-900 text-center">Categories</h2>
-          <nav className="space-y-2">
+          <nav className="space-y-2 overflow-y-auto max-h-[calc(100vh-200px)]">  // Scroll if many cats
             {categories.map((cat) => (
               <div key={cat.name} className="border-b border-gray-200 pb-2 last:border-b-0">
                 <div className="flex justify-between items-center">
                   <Link
                     href={`/categories/${cat.name}`}
                     className="flex items-center flex-1 p-2 hover:bg-gray-50 rounded text-left"
+                    onClick={() => setShowSidebar(false)}  // Close on mobile click
                   >
                     <span className="text-xl mr-2">{cat.icon}</span>
                     <span className="font-medium">{cat.label}</span>
@@ -74,6 +96,7 @@ export default function HomePage() {
                         <Link
                           href={`/categories/${cat.name}/${sub.name}`}
                           className="flex items-center text-blue-600 hover:text-blue-800 p-1 rounded"
+                          onClick={() => setShowSidebar(false)}  // Close on mobile
                         >
                           <span className="text-xs mr-2">{sub.icon}</span>
                           {sub.label}
