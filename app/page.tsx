@@ -1,17 +1,24 @@
 'use client';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Search, TrendingUp } from 'lucide-react';
+
+interface Category {
+  name: string;
+  label: string;
+  icon: string;
+}
 
 export default function HomePage() {
   const [searchQuery, setSearchQuery] = useState('');
-  const categories = [
-    { name: 'crypto', label: 'Crypto', icon: '₿' },
-    { name: 'electronics', label: 'Electronics', icon: '⚡' },
-    { name: 'watches', label: 'Watches', icon: '⌚' },
-    { name: 'sneakers', label: 'Sneakers', icon: '👟' },
-    // Add more: { name: 'nfts', label: 'NFTs', icon: '🎨' }
-  ];
+  const [categories, setCategories] = useState<Category[]>([]);
+
+  useEffect(() => {
+    fetch('/data/categories.json')
+      .then(res => res.json())
+      .then(data => setCategories(data.categories))
+      .catch(() => setCategories([])); // Fallback empty
+  }, []);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,7 +30,7 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
       <div className="max-w-6xl mx-auto px-4 py-12">
-        {/* Hero/Search Bar */}
+        {/* Hero/Search Bar – unchanged */}
         <div className="text-center mb-12">
           <h1 className="text-5xl font-bold text-gray-900 mb-4">TrackAura</h1>
           <p className="text-xl text-gray-600 mb-8">Track the value of every item in the world—historical prices, specs, and charts.</p>
@@ -44,7 +51,7 @@ export default function HomePage() {
           </form>
         </div>
 
-        {/* Category Teasers – Now Clickable! */}
+        {/* Dynamic Category Teasers */}
         <div className="mb-12">
           <h2 className="text-3xl font-semibold text-gray-900 mb-6 text-center">Explore Categories</h2>
           <div className="flex flex-wrap justify-center gap-4">
@@ -65,7 +72,7 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Quick Item Teasers (Optional: Link to popular items) */}
+        {/* Quick Item Teasers – unchanged */}
         <div className="grid md:grid-cols-3 gap-6">
           {['bitcoin', 'rolex-submariner', 'nike-air-jordan-1'].map((slug) => (
             <Link key={slug} href={`/item/${slug}`} className="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition">
