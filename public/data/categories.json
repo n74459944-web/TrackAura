@@ -9,14 +9,14 @@
           "slug": "bitcoin",
           "name": "Bitcoin",
           "image_url": "https://coin-images.coingecko.com/coins/images/1/large/bitcoin.png?1696501400",
-          "teaser_price": 101655,
+          "teaser_price": 101877,
           "trend": 0
         },
         {
           "slug": "ethereum",
           "name": "Ethereum",
           "image_url": "https://coin-images.coingecko.com/coins/images/279/large/ethereum.png?1696501628",
-          "teaser_price": 3384,
+          "teaser_price": 3377,
           "trend": 0
         },
         {
@@ -27,17 +27,17 @@
           "trend": 0
         },
         {
+          "slug": "binancecoin",
+          "name": "BNB",
+          "image_url": "https://coin-images.coingecko.com/coins/images/825/large/bnb-icon2_2x.png?1696501970",
+          "teaser_price": 992,
+          "trend": 0
+        },
+        {
           "slug": "ripple",
           "name": "XRP",
           "image_url": "https://coin-images.coingecko.com/coins/images/44/large/xrp-symbol-white-128.png?1696501442",
           "teaser_price": 2,
-          "trend": 0
-        },
-        {
-          "slug": "binancecoin",
-          "name": "BNB",
-          "image_url": "https://coin-images.coingecko.com/coins/images/825/large/bnb-icon2_2x.png?1696501970",
-          "teaser_price": 987,
           "trend": 0
         },
         {
