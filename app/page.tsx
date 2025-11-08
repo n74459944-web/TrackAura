@@ -1,7 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
-import { Search, TrendingUp, ChevronDown, Menu } from 'lucide-react';  // Add Menu for hamburger
+import { Search, TrendingUp, ChevronDown, Menu } from 'lucide-react';
 import Auth from '@/components/Auth';
 
 interface Category {
@@ -15,7 +15,7 @@ export default function HomePage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [categories, setCategories] = useState<Category[]>([]);
   const [expandedCats, setExpandedCats] = useState<Set<string>>(new Set());
-  const [showSidebar, setShowSidebar] = useState(false);  // NEW: Mobile toggle
+  const [showSidebar, setShowSidebar] = useState(false);
 
   useEffect(() => {
     fetch('/data/categories.json')
@@ -24,6 +24,15 @@ export default function HomePage() {
       .catch(() => setCategories([]));
   }, []);
 
+  useEffect(() => {
+    if (showSidebar) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => { document.body.style.overflow = 'unset'; };
+  }, [showSidebar]);
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
@@ -31,7 +40,9 @@ export default function HomePage() {
     }
   };
 
-  const toggleSubCat = (catName: string) => {
+  const toggleSubCat = (catName: string, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
     const newExpanded = new Set(expandedCats);
     if (newExpanded.has(catName)) {
       newExpanded.delete(catName);
@@ -41,9 +52,18 @@ export default function HomePage() {
     setExpandedCats(newExpanded);
   };
 
+  const closeSidebar = () => setShowSidebar(false);
+
+  const handleLinkClick = (e: React.MouseEvent, href: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    window.location.href = href;
+    closeSidebar();
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
-      {/* Mobile Hamburger - NEW */}
+      {/* Mobile Hamburger */}
       <button
         onClick={() => setShowSidebar(true)}
         className="fixed top-4 left-4 lg:hidden z-50 bg-white p-2 rounded-lg shadow-md"
@@ -51,38 +71,31 @@ export default function HomePage() {
         <Menu className="w-6 h-6 text-gray-700" />
       </button>
 
-      <div className="max-w-7xl mx-auto px-2 lg:px-4 py-12 grid grid-cols-1 lg:grid-cols-4 gap-8">  {/* FIXED: px-2 for left push */}
+      <div className="max-w-7xl mx-auto px-2 lg:px-4 py-12 grid grid-cols-1 lg:grid-cols-4 gap-8">
         
-        {/* Left Sidebar: Categories Column */}
+        {/* Left Sidebar */}
         <aside 
-          className={`lg:col-span-1 bg-white rounded-xl shadow-md p-6 h-fit sticky top-12 transition-transform duration-300 ease-in-out ${
-            showSidebar ? 'fixed inset-y-0 left-0 z-40 w-64 transform translate-x-0' : 'lg:block -translate-x-full lg:translate-x-0'
-          }`}  // FIXED: Mobile slide-in, always block on lg
+          className={`lg:col-span-1 bg-white rounded-xl shadow-md p-6 h-fit sticky top-12 transition-all duration-300 ease-in-out overflow-y-auto max-h-screen z-50 ${
+            showSidebar ? 'fixed inset-y-0 left-0 w-64 transform translate-x-0 shadow-2xl' : '-translate-x-full lg:translate-x-0'
+          }`}
+          style={{ pointerEvents: 'auto' }}
         >
-          {/* Mobile Backdrop - NEW */}
-          {showSidebar && (
-            <div 
-              className="fixed inset-0 bg-black bg-opacity-50 lg:hidden z-30"
-              onClick={() => setShowSidebar(false)}
-            />
-          )}
-          
-          <h2 className="text-xl font-bold mb-6 text-gray-900 text-center">Categories</h2>
-          <nav className="space-y-2 overflow-y-auto max-h-[calc(100vh-200px)]">  // Scroll if many cats
+          <h2 className="text-xl font-bold mb-2 text-gray-900 text-center">Categories</h2>
+          <nav className="space-y-2" style={{ pointerEvents: 'auto' }}>
             {categories.map((cat) => (
               <div key={cat.name} className="border-b border-gray-200 pb-2 last:border-b-0">
                 <div className="flex justify-between items-center">
-                  <Link
-                    href={`/categories/${cat.name}`}
+                  <button
+                    onClick={(e) => handleLinkClick(e, `/categories/${cat.name}`)}
                     className="flex items-center flex-1 p-2 hover:bg-gray-50 rounded text-left"
-                    onClick={() => setShowSidebar(false)}  // Close on mobile click
+                    style={{ pointerEvents: 'auto' }}
                   >
                     <span className="text-xl mr-2">{cat.icon}</span>
                     <span className="font-medium">{cat.label}</span>
-                  </Link>
+                  </button>
                   {cat.subCategories && (
                     <button
-                      onClick={() => toggleSubCat(cat.name)}
+                      onClick={(e) => toggleSubCat(cat.name, e)}
                       className="p-2 hover:bg-gray-50 rounded"
                     >
                       <ChevronDown className={`w-4 h-4 transition-transform ${expandedCats.has(cat.name) ? 'rotate-180' : ''}`} />
@@ -93,14 +106,14 @@ export default function HomePage() {
                   <ul className="ml-6 mt-2 space-y-1 text-sm">
                     {cat.subCategories.map((sub) => (
                       <li key={sub.name}>
-                        <Link
-                          href={`/categories/${cat.name}/${sub.name}`}
-                          className="flex items-center text-blue-600 hover:text-blue-800 p-1 rounded"
-                          onClick={() => setShowSidebar(false)}  // Close on mobile
+                        <button
+                          onClick={(e) => handleLinkClick(e, `/categories/${cat.name}/${sub.name}`)}
+                          className="flex items-center text-blue-600 hover:text-blue-800 p-1 rounded w-full text-left"
+                          style={{ pointerEvents: 'auto' }}
                         >
                           <span className="text-xs mr-2">{sub.icon}</span>
-                          {sub.label}
-                        </Link>
+                          <span className="font-medium">{sub.label}</span>
+                        </button>
                       </li>
                     ))}
                   </ul>
@@ -110,8 +123,16 @@ export default function HomePage() {
           </nav>
         </aside>
 
-        {/* Main Content: Col-span-3 */}
-        <main className="lg:col-span-3">
+        {/* Main Content */}
+        <main className="lg:col-span-3 relative">
+          {/* Backdrop */}
+          {showSidebar && (
+            <div 
+              className="fixed inset-0 bg-gray-500/10 lg:hidden z-30"
+              onClick={closeSidebar}
+            />
+          )}
+          
           {/* Hero/Search Bar */}
           <div className="text-center mb-12">
             <h1 className="text-5xl font-bold text-gray-900 mb-4">TrackAura</h1>
@@ -123,7 +144,7 @@ export default function HomePage() {
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search items (e.g., bitcoin, rolex submariner)..."
+                  placeholder="Search items (e.g., bitcoin, Rolex submariner)..."
                   className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
