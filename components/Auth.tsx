@@ -10,27 +10,28 @@ export default function Auth() {
   const [isSignUp, setIsSignUp] = useState(false);  // Toggle for UX/messaging only
 
   const handleMagicLink = async () => {
-    setLoading(true);
-    const options = {
-      emailRedirectTo: typeof window !== 'undefined' ? window.location.origin : '',  // Redirect back to site
-    };
-
-    const { error } = await supabase.auth.signInWithOtp({
-      email,
-      options,
-    });
-    
-    if (error) {
-      alert(`Oops: ${error.message}`);  // Swap for toast lib later (e.g., react-hot-toast)
-    } else {
-      alert(
-        isSignUp 
-          ? 'Check your email to create your TrackAura account!' 
-          : 'Check your email to sign in and start tracking!'
-      );
-    }
-    setLoading(false);
+  setLoading(true);
+  const callbackUrl = `${typeof window !== 'undefined' ? window.location.origin : ''}/auth/confirm`;
+  const options = {
+    emailRedirectTo: callbackUrl,  // Redirects link to /auth/confirm for token exchange
   };
+
+  const { error } = await supabase.auth.signInWithOtp({
+    email,
+    options,
+  });
+  
+  if (error) {
+    alert(`Oops: ${error.message}`);
+  } else {
+    alert(
+      isSignUp 
+        ? 'Check your email to create your TrackAura account!' 
+        : 'Check your email to sign in and start tracking!'
+    );
+  }
+  setLoading(false);
+};
 
   return (
     <div className="fixed top-4 right-4 p-4 bg-white shadow-lg rounded-lg border border-gray-200 z-50 max-w-sm">
