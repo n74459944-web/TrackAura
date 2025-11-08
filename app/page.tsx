@@ -2,6 +2,7 @@
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { Search, TrendingUp } from 'lucide-react';
+import Auth from '@/components/Auth';
 
 interface Category {
   name: string;
@@ -28,7 +29,7 @@ export default function HomePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 z-10">
       <div className="max-w-6xl mx-auto px-4 py-12">
         {/* Hero/Search Bar – unchanged */}
         <div className="text-center mb-12">
@@ -81,6 +82,9 @@ export default function HomePage() {
             </Link>
           ))}
         </div>
+
+        {/* Auth Overlay – NEW: Sign-up/login form */}
+        <Auth />
       </div>
     </div>
   );
