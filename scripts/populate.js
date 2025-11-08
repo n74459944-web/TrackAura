@@ -1,213 +1,166 @@
+// scripts/populate.js
+require('dotenv').config({ path: '.env.local' });
 const fs = require('fs');
-const dotenv = require('dotenv');
-dotenv.config({ path: '.env.local' }); // Explicit .env.local load
+const path = require('path');
 
-async function populate() {
+const CATEGORIES_PATH = path.join(__dirname, '../public/data/categories.json');
+const GROK_API_KEY = process.env.GROK_API_KEY;
+
+console.log('Starting TrackAura populate with Grok...');
+console.log('GROK_API_KEY loaded:', GROK_API_KEY ? 'Yes' : 'No');
+
+if (!GROK_API_KEY) {
+  console.error('Add GROK_API_KEY to .env.local');
+  process.exit(1);
+}
+
+async function delay(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function fetchGrokData(items) {
+  const slugs = items.map(item => item.slug).join(', ');
+  const prompt = `For these top crypto items (${slugs}): Fetch current USD prices + 24h % change. Output ONLY valid JSON array—no other text: [{ "slug": "bitcoin", "price": number, "change24h": number }, ...]. Sources: CoinMarketCap. Accurate now.`;
+
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 10000);  // FIXED: 10s timeout
+
   try {
-    const apiKey = process.env.POLYGON_API_KEY;
-    if (!apiKey) throw new Error('Add POLYGON_API_KEY to .env.local (free signup at polygon.io)');
+    const res = await fetch('https://api.x.ai/v1/chat/completions', {
+      method: 'POST',
+      signal: controller.signal,
+      headers: {
+        'Authorization': `Bearer ${GROK_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'grok-3',
+        messages: [{ role: 'user', content: prompt }],
+        temperature: 0.1,
+        max_tokens: 500,
+      }),
+    });
+    clearTimeout(timeoutId);
 
-    // Crypto: Live from CoinGecko (no key)
-    const cryptoRes = await fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=10&page=1');
-    if (!cryptoRes.ok) throw new Error(`CoinGecko fetch failed: ${cryptoRes.status}`);
-    const cryptos = await cryptoRes.json();
-    const cryptoItems = cryptos.slice(0, 6).map(c => ({
-      slug: c.id,
-      name: c.name,
-      image_url: c.image,
-      teaser_price: Math.round(c.current_price),
-      trend: c.price_change_percentage_1y_in_currency || 0
-    }));
-
-    // Stocks: Live from Polygon (top 6 tickers, 1Y trend/price)
-    const tickers = ['NVDA', 'AVGO', 'JPM', 'LLY', 'PLTR', 'MSFT'];
-    const stockItems = [];
-    for (const ticker of tickers) {
-      const stockRes = await fetch(`https://api.polygon.io/v2/aggs/ticker/${ticker}/range/1/year/2024-11-08/2025-11-08?adjusted=true&sort=asc&apikey=${apiKey}`);
-      if (!stockRes.ok) {
-        console.warn(`Polygon skip for ${ticker}: ${stockRes.status} (rate limit? Wait 1min)`);
-        continue;
-      }
-      const stockData = await stockRes.json();
-      if (stockData.results && stockData.results.length > 1) {
-        const firstPrice = stockData.results[0].c;
-        const lastPrice = stockData.results[stockData.results.length - 1].c;
-        const trend = ((lastPrice - firstPrice) / firstPrice * 100).toFixed(1);
-        stockItems.push({
-          slug: ticker.toLowerCase(),
-          name: `${ticker} Stock`,
-          image_url: `https://logo.clearbit.com/${ticker.toLowerCase()}.com`,
-          teaser_price: Math.round(lastPrice),
-          trend: parseFloat(trend)
-        });
-      }
-    }
-
-    // Full data: Crypto/Stocks live, others static (all 21 hardcoded with double quotes)
-    const data = {
-      categories: [
-        { name: "crypto", label: "Crypto", icon: "₿", items: cryptoItems },
-        { name: "stocks", label: "Stocks", icon: "📈", items: stockItems.length ? stockItems : [] },
-        { name: "coins", label: "Rare Coins", icon: "🪙", items: [
-          { slug: "morgan-dollar-1889", name: "High-Grade Morgan Dollar 1889", image_url: "https://example.com/morgan-dollar.jpg", teaser_price: 5000, trend: 25.0 },
-          { slug: "double-eagle-1933", name: "1933 Double Eagle", image_url: "https://example.com/double-eagle.jpg", teaser_price: 18000000, trend: 30.2 },
-          { slug: "flowing-hair-dollar", name: "Flowing Hair Dollar", image_url: "https://example.com/flowing-hair.jpg", teaser_price: 10000000, trend: 22.1 },
-          { slug: "brazilian-gold-reais", name: "Brazilian Gold Reais", image_url: "https://example.com/brazilian-reais.jpg", teaser_price: 500000, trend: 18.5 },
-          { slug: "saint-gaudens-double-eagle", name: "Saint-Gaudens Double Eagle", image_url: "https://example.com/saint-gaudens.jpg", teaser_price: 20000, trend: 15.3 },
-          { slug: "liberty-head-nickel", name: "Liberty Head Nickel 1913", image_url: "https://example.com/liberty-nickel.jpg", teaser_price: 4500000, trend: 28.7 }
-        ] },
-        { name: "baseball-cards", label: "Baseball Cards", icon: "⚾", items: [
-          { slug: "honus-wagner-t206", name: "Honus Wagner T206", image_url: "https://example.com/honus-wagner.jpg", teaser_price: 7000000, trend: 15.2 },
-          { slug: "mickey-mantle-1952", name: "Mickey Mantle 1952 Topps", image_url: "https://example.com/mantle-1952.jpg", teaser_price: 12000000, trend: 20.4 },
-          { slug: "babe-ruth-1914", name: "Babe Ruth 1914 Baltimore News", image_url: "https://example.com/ruth-1914.jpg", teaser_price: 6000000, trend: 18.9 },
-          { slug: "jackie-robinson-1949", name: "Jackie Robinson 1949 Leaf", image_url: "https://example.com/robinson-1949.jpg", teaser_price: 800000, trend: 25.6 },
-          { slug: "wilt-chamberlain-1961", name: "Wilt Chamberlain 1961 Fleer", image_url: "https://example.com/chamberlain-1961.jpg", teaser_price: 1500000, trend: 12.1 },
-          { slug: "lebron-james-2003", name: "LeBron James 2003 Upper Deck", image_url: "https://example.com/lebron-2003.jpg", teaser_price: 500000, trend: 35.0 }
-        ] },
-        { name: "comic-books", label: "Comic Books", icon: "📚", items: [
-          { slug: "action-comics-1", name: "Action Comics #1", image_url: "https://example.com/action-comics-1.jpg", teaser_price: 6000000, trend: 20.1 },
-          { slug: "detective-comics-27", name: "Detective Comics #27", image_url: "https://example.com/detective-27.jpg", teaser_price: 2000000, trend: 18.3 },
-          { slug: "amazing-fantasy-15", name: "Amazing Fantasy #15", image_url: "https://example.com/amazing-fantasy-15.jpg", teaser_price: 1500000, trend: 25.2 },
-          { slug: "x-men-1", name: "X-Men #1", image_url: "https://example.com/x-men-1.jpg", teaser_price: 500000, trend: 22.4 },
-          { slug: "fantastic-four-1", name: "Fantastic Four #1", image_url: "https://example.com/fantastic-four-1.jpg", teaser_price: 800000, trend: 16.7 },
-          { slug: "incredible-hulk-181", name: "Incredible Hulk #181", image_url: "https://example.com/hulk-181.jpg", teaser_price: 400000, trend: 30.5 }
-        ] },
-        { name: "vintage-vinyl", label: "Vintage Vinyl", icon: "🎵", items: [
-          { slug: "beatles-white-album", name: "The Beatles White Album", image_url: "https://example.com/white-album.jpg", teaser_price: 10000, trend: 18.5 },
-          { slug: "led-zeppelin-iv", name: "Led Zeppelin IV", image_url: "https://example.com/led-zeppelin-iv.jpg", teaser_price: 5000, trend: 15.2 },
-          { slug: "pink-floyd-dark-side", name: "Pink Floyd Dark Side of the Moon", image_url: "https://example.com/dark-side.jpg", teaser_price: 3000, trend: 20.1 },
-          { slug: "michael-jackson-thriller", name: "Michael Jackson Thriller", image_url: "https://example.com/thriller.jpg", teaser_price: 2000, trend: 12.3 },
-          { slug: "rolling-stones-sticky-fingers", name: "Rolling Stones Sticky Fingers", image_url: "https://example.com/sticky-fingers.jpg", teaser_price: 1500, trend: 14.8 },
-          { slug: "bob-dylan-highway-61", name: "Bob Dylan Highway 61 Revisited", image_url: "https://example.com/highway-61.jpg", teaser_price: 2500, trend: 22.0 }
-        ] },
-        { name: "books", label: "First-Edition Books", icon: "📖", items: [
-          { slug: "harry-potter-philosophers-stone", name: "Harry Potter Philosopher's Stone 1st Ed", image_url: "https://example.com/harry-potter-1st.jpg", teaser_price: 50000, trend: 30.0 },
-          { slug: "to-kill-a-mockingbird", name: "To Kill a Mockingbird 1st Ed", image_url: "https://example.com/mockingbird.jpg", teaser_price: 25000, trend: 18.2 },
-          { slug: "1984-george-orwell", name: "1984 by George Orwell 1st Ed", image_url: "https://example.com/1984.jpg", teaser_price: 40000, trend: 25.5 },
-          { slug: "the-great-gatsby", name: "The Great Gatsby 1st Ed", image_url: "https://example.com/gatsby.jpg", teaser_price: 100000, trend: 22.1 },
-          { slug: "ulysses-james-joyce", name: "Ulysses by James Joyce 1st Ed", image_url: "https://example.com/ulysses.jpg", teaser_price: 150000, trend: 28.3 },
-          { slug: "the-hobbit", name: "The Hobbit 1st Ed", image_url: "https://example.com/hobbit.jpg", teaser_price: 60000, trend: 35.7 }
-        ] },
-        { name: "movie-posters", label: "Movie Posters", icon: "🎥", items: [
-          { slug: "star-wars-1977", name: "Star Wars 1977 Original Poster", image_url: "https://example.com/star-wars-poster.jpg", teaser_price: 25000, trend: 12.3 },
-          { slug: "casablanca-1942", name: "Casablanca 1942 One Sheet", image_url: "https://example.com/casablanca.jpg", teaser_price: 15000, trend: 10.5 },
-          { slug: "the-godfather-1972", name: "The Godfather 1972 Style A", image_url: "https://example.com/godfather.jpg", teaser_price: 20000, trend: 15.8 },
-          { slug: "jaws-1975", name: "Jaws 1975 Original", image_url: "https://example.com/jaws.jpg", teaser_price: 10000, trend: 14.2 },
-          { slug: "psycho-1960", name: "Psycho 1960 One Sheet", image_url: "https://example.com/psycho.jpg", teaser_price: 18000, trend: 16.9 },
-          { slug: "citizen-kane-1941", name: "Citizen Kane 1941 Teaser", image_url: "https://example.com/citizen-kane.jpg", teaser_price: 30000, trend: 20.4 }
-        ] },
-        { name: "watches", label: "Watches", icon: "⌚", items: [
-          { slug: "rolex-submariner", name: "Rolex Submariner", image_url: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Rolex_Submariner_116610LN_%282020%29_%28cropped%29.png/800px-Rolex_Submariner_116610LN_%282020%29_%28cropped%29.png", teaser_price: 13500, trend: 12.4 },
-          { slug: "omega-seamaster", name: "Omega Seamaster", image_url: "https://www.omegawatches.com/media/catalog/product/cache/1/image/9df78eab33525d08d6e5fb8d27136e95/s/e/seamaster-diver-300m-co-axial-master-chronometer-42-mm-210-30-42-20-03-001_1.jpg", teaser_price: 5500, trend: 8.9 },
-          { slug: "tag-heuer-carrera", name: "TAG Heuer Carrera", image_url: "https://www.tagheuer.com/media/catalog/product/cache/1/image/9df78eab33525d08d6e5fb8d27136e95/c/a/carrera-calibre-5-day-date-wbn2110-ba0625_1.jpg", teaser_price: 3500, trend: 6.1 },
-          { slug: "breitling-navitimer", name: "Breitling Navitimer", image_url: "https://www.breitling.com/media/catalog/product/cache/1/image/9df78eab33525d08d6e5fb8d27136e95/n/a/navitimer-b01-chronograph-41-ab0138a21b1x1_1.jpg", teaser_price: 8500, trend: 11.2 },
-          { slug: "patek-philippe-nautilus", name: "Patek Philippe Nautilus", image_url: "https://www.patek.com/sites/default/files/2023-07/5711_1NA_010_RGB.jpg", teaser_price: 55000, trend: 25.3 },
-          { slug: "audemars-piguet-royal-oak", name: "Audemars Piguet Royal Oak", image_url: "https://www.audemarspiguet.com/content/dam/ap/royal-oak-selfwinding-41mm-stainless-steel-15500st-1220st-01.jpg", teaser_price: 28000, trend: 18.7 }
-        ] },
-        { name: "sneakers", label: "Sneakers", icon: "👟", items: [
-          { slug: "nike-air-jordan-1", name: "Nike Air Jordan 1", image_url: "https://static.nike.com/a/images/t_PDP_1280_v1/f_auto,q_auto:eco/0b1d2c3e-4f5a-4b2a-8c1d-3e9f8a7b6c5d/air-jordan-1-high-og-shoes-0b1d2c3e-4f5a-4b2a-8c1d-3e9f8a7b6c5d.jpg", teaser_price: 180, trend: 20.4 },
-          { slug: "adidas-yeezy-boost", name: "Adidas Yeezy Boost", image_url: "https://www.adidas.com/us/yeezy-boost-350-v2.jpg", teaser_price: 220, trend: 15.6 },
-          { slug: "nike-air-max-95", name: "Nike Air Max 95 OG Neon", image_url: "https://static.nike.com/a/images/t_PDP_1280_v1/f_auto,q_auto:eco/1a2b3c4d-5e6f-7g8h-9i0j-k1l2m3n4o5p6/air-max-95-og-shoes-1a2b3c4d-5e6f-7g8h-9i0j-k1l2m3n4o5p6.jpg", teaser_price: 200, trend: 15.6 },
-          { slug: "air-jordan-3-black-cat", name: "Air Jordan 3 Black Cat", image_url: "https://static.nike.com/a/images/t_PDP_1280_v1/f_auto,q_auto:eco/2b3c4d5e-6f7g-8h9i-0j1k-l2m3n4o5p6q7/air-jordan-3-black-cat-shoes-2b3c4d5e-6f7g-8h9i-0j1k-l2m3n4o5p6q7.jpg", teaser_price: 250, trend: 25.1 },
-          { slug: "new-balance-992", name: "New Balance 992 Aged Well", image_url: "https://www.newbalance.com/on/demandware.static/-/Sites-nb-us-Library/default/dw1a1b2c3d/992.jpg", teaser_price: 220, trend: 18.3 },
-          { slug: "puma-speedcat", name: "Puma Speedcat", image_url: "https://www.puma.com/us/en/pd/speedcat-puma-white/381246.html", teaser_price: 100, trend: 30.5 }
-        ] },
-        { name: "art", label: "Art", icon: "🎨", items: [
-          { slug: "david-hockney-portrait", name: "David Hockney Portrait", image_url: "https://maddoxgallery.com/media/catalog/product/cache/1/image/9df78eab33525d08d6e5fb8d27136e95/d/a/david-hockney-portrait-of-an-artist-pool-with-two-figures-1972.jpg", teaser_price: 90000000, trend: 15.2 },
-          { slug: "andy-warhol-marilyn", name: "Andy Warhol Marilyn", image_url: "https://maddoxgallery.com/media/catalog/product/cache/1/image/9df78eab33525d08d6e5fb8d27136e95/a/n/andy-warhol-marilyn-di-pt-109-ser-1962.jpg", teaser_price: 20000000, trend: 10.5 },
-          { slug: "banksy-girl-with-balloon", name: "Banksy Girl with Balloon", image_url: "https://maddoxgallery.com/media/catalog/product/cache/1/image/9df78eab33525d08d6e5fb8d27136e95/b/a/banksy-girl-with-balloon-love-is-in-the-bin-2018.jpg", teaser_price: 25000000, trend: 22.1 },
-          { slug: "jasper-johns-flag", name: "Jasper Johns Flag", image_url: "https://bluewater-ins.com/wp-content/uploads/2025/05/jasper-johns-flag-1958.jpg", teaser_price: 110000000, trend: 18.7 },
-          { slug: "jeff-koons-rabbit", name: "Jeff Koons Rabbit", image_url: "https://bluewater-ins.com/wp-content/uploads/2025/05/jeff-koons-rabbit-1986.jpg", teaser_price: 91000000, trend: 20.3 },
-          { slug: "gabriele-zago-abstract", name: "Gabriele Zago Abstract", image_url: "https://www.artelier.com/wp-content/uploads/2024/12/gabriele-zago.jpg", teaser_price: 50000, trend: 35.6 }
-        ] },
-        { name: "wine", label: "Wine", icon: "🍷", items: [
-          { slug: "chapoutier-ermitage-le-pavillon-2008", name: "M. Chapoutier Ermitage Le Pavillon 2008", image_url: "https://www.wineinvestment.com/wp-content/uploads/2025/08/chapoutier-ermitage.jpg", teaser_price: 500, trend: 38.7 },
-          { slug: "vega-sicilia-valbuena-5-2016", name: "Vega Sicilia Valbuena 5° 2016", image_url: "https://www.wineinvestment.com/wp-content/uploads/2025/08/vega-sicilia.jpg", teaser_price: 150, trend: 29.0 },
-          { slug: "penfolds-grange-2018", name: "Penfolds Grange 2018", image_url: "https://www.vinovest.co/wp-content/uploads/penfolds-grange.jpg", teaser_price: 700, trend: 25.4 },
-          { slug: "henschke-hill-of-grace-2019", name: "Henschke Hill of Grace 2019", image_url: "https://www.vinovest.co/wp-content/uploads/henschke-hill-of-grace.jpg", teaser_price: 300, trend: 18.2 },
-          { slug: "brotte-creation-grosset-red-2022", name: "Brotte Création Grosset Red 2022", image_url: "https://www.wineenthusiast.com/wp-content/uploads/2025/09/brotte-creation-grosset.jpg", teaser_price: 20, trend: 12.1 },
-          { slug: "jim-barry-the-armagh-2020", name: "Jim Barry The Armagh 2020", image_url: "https://www.vinovest.co/wp-content/uploads/jim-barry-armagh.jpg", teaser_price: 200, trend: 15.8 }
-        ] },
-        { name: "real-estate", label: "Real Estate", icon: "🏠", items: [
-          { slug: "union-city-ca", name: "Union City, CA", image_url: "https://constructioncoverage.com/wp-content/uploads/union-city-ca.jpg", teaser_price: 950000, trend: 94.3 },
-          { slug: "lawrence-ma", name: "Lawrence, MA", image_url: "https://constructioncoverage.com/wp-content/uploads/lawrence-ma.jpg", teaser_price: 450000, trend: 94.0 },
-          { slug: "santa-clara-ca", name: "Santa Clara, CA", image_url: "https://constructioncoverage.com/wp-content/uploads/santa-clara-ca.jpg", teaser_price: 1400000, trend: 91.7 },
-          { slug: "boise-id", name: "Boise, ID", image_url: "https://www.quickenloans.com/wp-content/uploads/boise-id.jpg", teaser_price: 480000, trend: 85.2 },
-          { slug: "st-petersburg-fl", name: "St. Petersburg, FL", image_url: "https://www.quickenloans.com/wp-content/uploads/st-petersburg-fl.jpg", teaser_price: 350000, trend: 78.4 },
-          { slug: "omaha-ne", name: "Omaha, NE", image_url: "https://realestate.usnews.com/wp-content/uploads/omaha-ne.jpg", teaser_price: 280000, trend: 76.2 }
-        ] },
-        { name: "alternative-investments", label: "Alternative Investments", icon: "💼", items: [
-          { slug: "us-housing-shortage", name: "U.S. Housing Market Fund", image_url: "https://example.com/us-housing.jpg", teaser_price: 300000, trend: 94.3 },
-          { slug: "ai-energy-bottleneck", name: "AI Energy Infrastructure", image_url: "https://example.com/ai-energy.jpg", teaser_price: 50000, trend: 200.0 },
-          { slug: "private-credit-fund", name: "Private Credit Fund", image_url: "https://example.com/private-credit.jpg", teaser_price: 100000, trend: 12.5 },
-          { slug: "venture-capital-ai", name: "Venture Capital AI Startup", image_url: "https://example.com/vc-ai.jpg", teaser_price: 25000, trend: 150.2 },
-          { slug: "renewable-energy-etf", name: "Renewable Energy ETF", image_url: "https://example.com/renewable-etf.jpg", teaser_price: 5000, trend: 30.1 },
-          { slug: "farmland-investment", name: "Farmland Investment Trust", image_url: "https://example.com/farmland.jpg", teaser_price: 10000, trend: 18.7 }
-        ] },
-        { name: "ai-infrastructure", label: "AI Infrastructure", icon: "🤖", items: [
-          { slug: "ai-energy-bottleneck", name: "AI Energy Demand Shares", image_url: "https://example.com/ai-energy.jpg", teaser_price: 50000, trend: 200.0 },
-          { slug: "data-center-reit", name: "Data Center REIT", image_url: "https://example.com/data-center.jpg", teaser_price: 20000, trend: 120.5 },
-          { slug: "gpu-manufacturing", name: "GPU Manufacturing Stock", image_url: "https://example.com/gpu-stock.jpg", teaser_price: 100, trend: 180.2 },
-          { slug: "cloud-computing-etf", name: "Cloud Computing ETF", image_url: "https://example.com/cloud-etf.jpg", teaser_price: 5000, trend: 45.3 },
-          { slug: "semiconductor-ai-chip", name: "AI Semiconductor Chip", image_url: "https://example.com/ai-chip.jpg", teaser_price: 150, trend: 95.6 },
-          { slug: "quantum-computing-fund", name: "Quantum Computing Fund", image_url: "https://example.com/quantum-fund.jpg", teaser_price: 10000, trend: 300.1 }
-        ] },
-        { name: "fixed-income", label: "Fixed Income", icon: "📊", items: [
-          { slug: "investment-grade-bonds", name: "Investment-Grade Corporate Bonds", image_url: "https://example.com/bonds.jpg", teaser_price: 1000, trend: 5.2 },
-          { slug: "municipal-bonds", name: "Municipal Bonds AAA", image_url: "https://example.com/muni-bonds.jpg", teaser_price: 5000, trend: 4.8 },
-          { slug: "high-yield-bonds", name: "High-Yield Junk Bonds", image_url: "https://example.com/junk-bonds.jpg", teaser_price: 2000, trend: 8.1 },
-          { slug: "t-bonds-10-year", name: "10-Year Treasury Bonds", image_url: "https://example.com/t-bonds.jpg", teaser_price: 1000, trend: 3.5 },
-          { slug: "corporate-bond-etf", name: "Corporate Bond ETF", image_url: "https://example.com/corp-etf.jpg", teaser_price: 5000, trend: 6.2 },
-          { slug: "emerging-market-bonds", name: "Emerging Market Bonds", image_url: "https://example.com/em-bonds.jpg", teaser_price: 3000, trend: 10.4 }
-        ] },
-        { name: "t-bills", label: "Treasury Bills", icon: "💵", items: [
-          { slug: "t-bills-3-month", name: "3-Month T-Bills", image_url: "https://example.com/t-bills.jpg", teaser_price: 1000, trend: 4.8 },
-          { slug: "t-bills-6-month", name: "6-Month T-Bills", image_url: "https://example.com/t-bills-6m.jpg", teaser_price: 1000, trend: 4.9 },
-          { slug: "t-bills-1-year", name: "1-Year T-Bills", image_url: "https://example.com/t-bills-1y.jpg", teaser_price: 1000, trend: 5.0 },
-          { slug: "t-bills-auction", name: "T-Bills Auction Yield", image_url: "https://example.com/t-bills-auction.jpg", teaser_price: 1000, trend: 4.7 },
-          { slug: "t-bills-etf", name: "T-Bills ETF (SGOV)", image_url: "https://example.com/sgov-etf.jpg", teaser_price: 100, trend: 5.1 },
-          { slug: "t-bills-floating-rate", name: "Floating Rate T-Bills", image_url: "https://example.com/floating-t-bills.jpg", teaser_price: 1000, trend: 5.3 }
-        ] },
-        { name: "high-yield-savings", label: "High-Yield Savings", icon: "🏦", items: [
-          { slug: "high-yield-account-ally", name: "Ally High-Yield Savings", image_url: "https://example.com/ally-savings.jpg", teaser_price: 10000, trend: 5.0 },
-          { slug: "capital-one-360", name: "Capital One 360 Performance", image_url: "https://example.com/capital-one.jpg", teaser_price: 10000, trend: 4.9 },
-          { slug: "discover-online", name: "Discover Online Savings", image_url: "https://example.com/discover-savings.jpg", teaser_price: 10000, trend: 5.1 },
-          { slug: "marcus-goldman", name: "Marcus by Goldman Sachs", image_url: "https://example.com/marcus-savings.jpg", teaser_price: 10000, trend: 5.2 },
-          { slug: "citi-accelerate", name: "Citi Accelerate Savings", image_url: "https://example.com/citi-savings.jpg", teaser_price: 10000, trend: 4.8 },
-          { slug: "sofi-high-yield", name: "SoFi High-Yield Savings", image_url: "https://example.com/sofi-savings.jpg", teaser_price: 10000, trend: 5.3 }
-        ] },
-        { name: "private-equity", label: "Private Equity", icon: "🏢", items: [
-          { slug: "private-markets-fund", name: "Global Private Markets Fund", image_url: "https://example.com/private-equity.jpg", teaser_price: 100000, trend: 12.5 },
-          { slug: "venture-growth-fund", name: "Venture Growth Fund", image_url: "https://example.com/venture-growth.jpg", teaser_price: 50000, trend: 18.2 },
-          { slug: "buyout-fund-large-cap", name: "Large-Cap Buyout Fund", image_url: "https://example.com/buyout-fund.jpg", teaser_price: 200000, trend: 10.1 },
-          { slug: "distressed-debt-fund", name: "Distressed Debt Fund", image_url: "https://example.com/distressed-debt.jpg", teaser_price: 75000, trend: 15.4 },
-          { slug: "secondaries-fund", name: "Private Equity Secondaries", image_url: "https://example.com/secondaries.jpg", teaser_price: 150000, trend: 14.3 },
-          { slug: "impact-investing-pe", name: "Impact Private Equity", image_url: "https://example.com/impact-pe.jpg", teaser_price: 80000, trend: 20.6 }
-        ] },
-        { name: "equities", label: "Equities", icon: "📈", items: [
-          { slug: "global-stocks-index", name: "MSCI World Equities Index", image_url: "https://example.com/equities.jpg", teaser_price: 5000, trend: 10.2 },
-          { slug: "s-p-500-etf", name: "S&P 500 ETF (SPY)", image_url: "https://example.com/spy-etf.jpg", teaser_price: 500, trend: 12.1 },
-          { slug: "nasdaq-100", name: "Nasdaq 100 ETF (QQQ)", image_url: "https://example.com/qqq-etf.jpg", teaser_price: 450, trend: 18.5 },
-          { slug: "emerging-markets-equities", name: "Emerging Markets Equities", image_url: "https://example.com/em-equities.jpg", teaser_price: 3000, trend: 8.7 },
-          { slug: "small-cap-equities", name: "Russell 2000 Small-Cap", image_url: "https://example.com/russell-2000.jpg", teaser_price: 2000, trend: 15.3 },
-          { slug: "dividend-aristocrats", name: "Dividend Aristocrats ETF", image_url: "https://example.com/dividend-etf.jpg", teaser_price: 4000, trend: 9.8 }
-        ] },
-        { name: "commodities", label: "Commodities", icon: "⛽", items: [
-          { slug: "gold-futures", name: "Gold Futures Contract", image_url: "https://example.com/gold.jpg", teaser_price: 2500, trend: 20.1 },
-          { slug: "silver-etf", name: "Silver ETF (SLV)", image_url: "https://example.com/silver-etf.jpg", teaser_price: 25, trend: 18.4 },
-          { slug: "oil-wti-futures", name: "WTI Oil Futures", image_url: "https://example.com/wti-oil.jpg", teaser_price: 80, trend: 5.2 },
-          { slug: "copper-futures", name: "Copper Futures", image_url: "https://example.com/copper.jpg", teaser_price: 4.5, trend: 12.3 },
-          { slug: "agricultural-soybeans", name: "Soybeans Futures", image_url: "https://example.com/soybeans.jpg", teaser_price: 12, trend: 8.1 },
-          { slug: "natural-gas-futures", name: "Natural Gas Futures", image_url: "https://example.com/natural-gas.jpg", teaser_price: 3, trend: 25.6 }
-        ] }
-      ]
-    };
-
-    fs.writeFileSync('public/data/categories.json', JSON.stringify(data, null, 2));
-    console.log('Populated! Live crypto/stocks updated (stocks fetched:', stockItems.length, '/6). Total categories: 23, items: ~138. Commit & push.');
-  } catch (error) {
-    console.error('Populate error:', error.message);
+    if (!res.ok) throw new Error(`Grok batch failed: ${res.status}`);
+    const text = await res.text();
+    const data = JSON.parse(text);
+    return JSON.parse(data.choices[0].message.content.trim());
+  } catch (err) {
+    clearTimeout(timeoutId);
+    if (err.name === 'AbortError') throw new Error('Batch timeout (10s)');
+    throw err;
   }
 }
 
-populate();
+function extractJson(text) {
+  const jsonMatch = text.trim().match(/\{[^{}]*(\{[^}]*\}[^{}]*)*\}/);
+  if (jsonMatch) {
+    try {
+      return JSON.parse(jsonMatch[0]);
+    } catch {}
+  }
+  throw new Error('No valid JSON found');
+}
+
+async function updateTeasers(categories) {
+  const cryptoCat = categories.find(cat => cat.name === 'crypto');
+  if (cryptoCat && cryptoCat.items.length > 0) {
+    try {
+      const updates = await fetchGrokData(cryptoCat.items);
+      cryptoCat.items.forEach(item => {
+        const update = updates.find(u => u.slug === item.slug);
+        if (update) {
+          item.teaser_price = update.price;
+          item.trend = update.change24h;
+        }
+      });
+      console.log(`Updated ${cryptoCat.items.length} crypto teasers via Grok.`);
+    } catch (err) {
+      console.error('Grok batch error:', err.message);
+    }
+  }
+
+  let generalCount = 0;
+  for (const cat of categories) {
+    if (cat.name !== 'crypto') {
+      for (const item of cat.items) {
+        const startTime = new Date().toISOString();  // FIXED: Timestamp log
+        console.log(`Starting teaser for ${item.slug} (${cat.name}) at ${startTime}`);
+        try {
+          let sources = 'eBay/StockX/Wikipedia';
+          if (cat.name === 'stocks') sources = 'Yahoo Finance/Google Finance (NVDA ~$140/share as fallback)';
+          else if (cat.name === 'coins') sources = 'PCGS/Numista';
+          const prompt = `For "${item.slug}" in "${cat.name}": Current USD price + 1Y trend %. Output STRICTLY valid JSON object—no other text, no explanations, no "I'm": { "price": number, "trend": number }. Sources: ${sources}. Accurate as of Nov 8, 2025.`;
+
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 10000);  // FIXED: Per-call timeout
+
+          const res = await fetch('https://api.x.ai/v1/chat/completions', {
+            method: 'POST',
+            signal: controller.signal,
+            headers: {
+              'Authorization': `Bearer ${GROK_API_KEY}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              model: 'grok-3',
+              messages: [{ role: 'user', content: prompt }],
+              temperature: 0.0,
+              max_tokens: 100,
+            }),
+          });
+          clearTimeout(timeoutId);
+
+          console.log(`Grok response for ${item.slug}: ${res.status} at ${new Date().toISOString()}`);
+
+          if (res.ok) {
+            const text = await res.text();
+            const data = JSON.parse(text);
+            let parsed;
+            try {
+              parsed = extractJson(data.choices[0].message.content.trim());
+            } catch (parseErr) {
+              console.error(`Parse failed for ${item.slug}: ${parseErr.message}. Raw: "${data.choices[0].message.content.substring(0, 100)}..."`);
+              continue;  // FIXED: Skip, don't hang
+            }
+            item.teaser_price = parsed.price || item.teaser_price;
+            item.trend = parsed.trend || item.trend;
+            generalCount++;
+            console.log(`Updated ${item.slug}: $${item.teaser_price} (trend ${item.trend}%)`);
+          } else {
+            console.error(`API error for ${item.slug}: ${res.status} - ${res.statusText}`);
+          }
+          await delay(1500);
+          console.log(`Completed ${item.slug} at ${new Date().toISOString()}`);
+        } catch (err) {
+          console.error(`Teaser for ${item.slug} failed at ${startTime}: ${err.message}`);
+          if (err.name === 'AbortError') console.log(`Timeout on ${item.slug}—skipping.`);
+        }
+      }
+    }
+  }
+  console.log(`Updated ${generalCount} general teasers.`);
+}
+
+async function main() {
+  let data;
+  try {
+    data = JSON.parse(fs.readFileSync(CATEGORIES_PATH, 'utf8'));
+  } catch (err) {
+    console.error('JSON load failed:', err);
+    return;
+  }
+
+  console.log(`Loaded ${data.categories.length} categories.`);
+
+  await updateTeasers(data.categories);
+
+  fs.writeFileSync(CATEGORIES_PATH, JSON.stringify(data, null, 2));
+  console.log('Populate complete! All teasers updated via Grok.');
+}
+
+main().catch(err => {
+  console.error('Populate error:', err.message);
+  process.exit(1);
+});

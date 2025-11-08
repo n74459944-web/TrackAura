@@ -9,43 +9,43 @@
           "slug": "bitcoin",
           "name": "Bitcoin",
           "image_url": "https://coin-images.coingecko.com/coins/images/1/large/bitcoin.png?1696501400",
-          "teaser_price": 101877,
-          "trend": 0
+          "teaser_price": 43150.23,
+          "trend": 1.25
         },
         {
           "slug": "ethereum",
           "name": "Ethereum",
           "image_url": "https://coin-images.coingecko.com/coins/images/279/large/ethereum.png?1696501628",
-          "teaser_price": 3377,
-          "trend": 0
+          "teaser_price": 2290.76,
+          "trend": 0.87
         },
         {
           "slug": "tether",
           "name": "Tether",
           "image_url": "https://coin-images.coingecko.com/coins/images/325/large/Tether.png?1696501661",
           "teaser_price": 1,
-          "trend": 0
+          "trend": 0.02
         },
         {
           "slug": "binancecoin",
           "name": "BNB",
           "image_url": "https://coin-images.coingecko.com/coins/images/825/large/bnb-icon2_2x.png?1696501970",
-          "teaser_price": 992,
-          "trend": 0
+          "teaser_price": 315.42,
+          "trend": -0.54
         },
         {
           "slug": "ripple",
           "name": "XRP",
           "image_url": "https://coin-images.coingecko.com/coins/images/44/large/xrp-symbol-white-128.png?1696501442",
-          "teaser_price": 2,
-          "trend": 0
+          "teaser_price": 0.62,
+          "trend": 2.13
         },
         {
           "slug": "solana",
           "name": "Solana",
           "image_url": "https://coin-images.coingecko.com/coins/images/4128/large/solana.png?1718769756",
-          "teaser_price": 157,
-          "trend": 0
+          "teaser_price": 104.89,
+          "trend": 3.76
         }
       ]
     },
@@ -58,36 +58,36 @@
           "slug": "nvda",
           "name": "NVDA Stock",
           "image_url": "https://logo.clearbit.com/nvda.com",
-          "teaser_price": 188,
-          "trend": 40.1
+          "teaser_price": 140,
+          "trend": 85
         },
         {
           "slug": "avgo",
           "name": "AVGO Stock",
           "image_url": "https://logo.clearbit.com/avgo.com",
-          "teaser_price": 349,
-          "trend": 50.7
+          "teaser_price": 178.25,
+          "trend": 62.34
         },
         {
           "slug": "jpm",
           "name": "JPM Stock",
           "image_url": "https://logo.clearbit.com/jpm.com",
-          "teaser_price": 314,
-          "trend": 31.1
+          "teaser_price": 144.23,
+          "trend": 23.5
         },
         {
           "slug": "lly",
           "name": "LLY Stock",
           "image_url": "https://logo.clearbit.com/lly.com",
-          "teaser_price": 924,
-          "trend": 19.7
+          "teaser_price": 140,
+          "trend": 85.5
         },
         {
           "slug": "pltr",
           "name": "PLTR Stock",
           "image_url": "https://logo.clearbit.com/pltr.com",
-          "teaser_price": 178,
-          "trend": 135.3
+          "teaser_price": 23.45,
+          "trend": -15.2
         }
       ]
     },
@@ -100,43 +100,43 @@
           "slug": "morgan-dollar-1889",
           "name": "High-Grade Morgan Dollar 1889",
           "image_url": "https://example.com/morgan-dollar.jpg",
-          "teaser_price": 5000,
-          "trend": 25
+          "teaser_price": 35,
+          "trend": 5
         },
         {
           "slug": "double-eagle-1933",
           "name": "1933 Double Eagle",
           "image_url": "https://example.com/double-eagle.jpg",
-          "teaser_price": 18000000,
-          "trend": 30.2
+          "teaser_price": 20000000,
+          "trend": 15.5
         },
         {
           "slug": "flowing-hair-dollar",
           "name": "Flowing Hair Dollar",
           "image_url": "https://example.com/flowing-hair.jpg",
-          "teaser_price": 10000000,
-          "trend": 22.1
+          "teaser_price": 7500,
+          "trend": 10
         },
         {
           "slug": "brazilian-gold-reais",
           "name": "Brazilian Gold Reais",
           "image_url": "https://example.com/brazilian-reais.jpg",
-          "teaser_price": 500000,
-          "trend": 18.5
+          "teaser_price": 1850,
+          "trend": 12.5
         },
         {
           "slug": "saint-gaudens-double-eagle",
           "name": "Saint-Gaudens Double Eagle",
           "image_url": "https://example.com/saint-gaudens.jpg",
-          "teaser_price": 20000,
-          "trend": 15.3
+          "teaser_price": 2200,
+          "trend": 10.5
         },
         {
           "slug": "liberty-head-nickel",
           "name": "Liberty Head Nickel 1913",
           "image_url": "https://example.com/liberty-nickel.jpg",
-          "teaser_price": 4500000,
-          "trend": 28.7
+          "teaser_price": 25,
+          "trend": 5
         }
       ]
     },
@@ -149,43 +149,43 @@
           "slug": "honus-wagner-t206",
           "name": "Honus Wagner T206",
           "image_url": "https://example.com/honus-wagner.jpg",
-          "teaser_price": 7000000,
-          "trend": 15.2
+          "teaser_price": 7800000,
+          "trend": 15.5
         },
         {
           "slug": "mickey-mantle-1952",
           "name": "Mickey Mantle 1952 Topps",
           "image_url": "https://example.com/mantle-1952.jpg",
-          "teaser_price": 12000000,
-          "trend": 20.4
+          "teaser_price": 125000,
+          "trend": 15.5
         },
         {
           "slug": "babe-ruth-1914",
           "name": "Babe Ruth 1914 Baltimore News",
           "image_url": "https://example.com/ruth-1914.jpg",
           "teaser_price": 6000000,
-          "trend": 18.9
+          "trend": 20
         },
         {
           "slug": "jackie-robinson-1949",
           "name": "Jackie Robinson 1949 Leaf",
           "image_url": "https://example.com/robinson-1949.jpg",
-          "teaser_price": 800000,
-          "trend": 25.6
+          "teaser_price": 2500,
+          "trend": 12.5
         },
         {
           "slug": "wilt-chamberlain-1961",
           "name": "Wilt Chamberlain 1961 Fleer",
           "image_url": "https://example.com/chamberlain-1961.jpg",
-          "teaser_price": 1500000,
-          "trend": 12.1
+          "teaser_price": 50000,
+          "trend": 25
         },
         {
           "slug": "lebron-james-2003",
           "name": "LeBron James 2003 Upper Deck",
           "image_url": "https://example.com/lebron-2003.jpg",
-          "teaser_price": 500000,
-          "trend": 35
+          "teaser_price": 1500,
+          "trend": 25
         }
       ]
     },
@@ -199,42 +199,42 @@
           "name": "Action Comics #1",
           "image_url": "https://example.com/action-comics-1.jpg",
           "teaser_price": 6000000,
-          "trend": 20.1
+          "trend": 20
         },
         {
           "slug": "detective-comics-27",
           "name": "Detective Comics #27",
           "image_url": "https://example.com/detective-27.jpg",
-          "teaser_price": 2000000,
-          "trend": 18.3
+          "teaser_price": 3000000,
+          "trend": 15
         },
         {
           "slug": "amazing-fantasy-15",
           "name": "Amazing Fantasy #15",
           "image_url": "https://example.com/amazing-fantasy-15.jpg",
-          "teaser_price": 1500000,
-          "trend": 25.2
+          "teaser_price": 1200000,
+          "trend": 15
         },
         {
           "slug": "x-men-1",
           "name": "X-Men #1",
           "image_url": "https://example.com/x-men-1.jpg",
-          "teaser_price": 500000,
-          "trend": 22.4
+          "teaser_price": 250000,
+          "trend": 15
         },
         {
           "slug": "fantastic-four-1",
           "name": "Fantastic Four #1",
           "image_url": "https://example.com/fantastic-four-1.jpg",
-          "teaser_price": 800000,
-          "trend": 16.7
+          "teaser_price": 250000,
+          "trend": 15
         },
         {
           "slug": "incredible-hulk-181",
           "name": "Incredible Hulk #181",
           "image_url": "https://example.com/hulk-181.jpg",
-          "teaser_price": 400000,
-          "trend": 30.5
+          "teaser_price": 25000,
+          "trend": 15
         }
       ]
     },
@@ -247,43 +247,43 @@
           "slug": "beatles-white-album",
           "name": "The Beatles White Album",
           "image_url": "https://example.com/white-album.jpg",
-          "teaser_price": 10000,
-          "trend": 18.5
+          "teaser_price": 150,
+          "trend": 12.5
         },
         {
           "slug": "led-zeppelin-iv",
           "name": "Led Zeppelin IV",
           "image_url": "https://example.com/led-zeppelin-iv.jpg",
-          "teaser_price": 5000,
-          "trend": 15.2
+          "teaser_price": 35,
+          "trend": 12.5
         },
         {
           "slug": "pink-floyd-dark-side",
           "name": "Pink Floyd Dark Side of the Moon",
           "image_url": "https://example.com/dark-side.jpg",
-          "teaser_price": 3000,
-          "trend": 20.1
+          "teaser_price": 35.5,
+          "trend": 12.5
         },
         {
           "slug": "michael-jackson-thriller",
           "name": "Michael Jackson Thriller",
           "image_url": "https://example.com/thriller.jpg",
-          "teaser_price": 2000,
-          "trend": 12.3
+          "teaser_price": 25,
+          "trend": 10.5
         },
         {
           "slug": "rolling-stones-sticky-fingers",
           "name": "Rolling Stones Sticky Fingers",
           "image_url": "https://example.com/sticky-fingers.jpg",
-          "teaser_price": 1500,
-          "trend": 14.8
+          "teaser_price": 35,
+          "trend": 12.5
         },
         {
           "slug": "bob-dylan-highway-61",
           "name": "Bob Dylan Highway 61 Revisited",
           "image_url": "https://example.com/highway-61.jpg",
-          "teaser_price": 2500,
-          "trend": 22
+          "teaser_price": 45,
+          "trend": 12.5
         }
       ]
     },
@@ -296,43 +296,43 @@
           "slug": "harry-potter-philosophers-stone",
           "name": "Harry Potter Philosopher's Stone 1st Ed",
           "image_url": "https://example.com/harry-potter-1st.jpg",
-          "teaser_price": 50000,
-          "trend": 30
+          "teaser_price": 25.99,
+          "trend": 12.5
         },
         {
           "slug": "to-kill-a-mockingbird",
           "name": "To Kill a Mockingbird 1st Ed",
           "image_url": "https://example.com/mockingbird.jpg",
-          "teaser_price": 25000,
-          "trend": 18.2
+          "teaser_price": 9.99,
+          "trend": 5.2
         },
         {
           "slug": "1984-george-orwell",
           "name": "1984 by George Orwell 1st Ed",
           "image_url": "https://example.com/1984.jpg",
-          "teaser_price": 40000,
-          "trend": 25.5
+          "teaser_price": 9.99,
+          "trend": 5.2
         },
         {
           "slug": "the-great-gatsby",
           "name": "The Great Gatsby 1st Ed",
           "image_url": "https://example.com/gatsby.jpg",
-          "teaser_price": 100000,
-          "trend": 22.1
+          "teaser_price": 9.99,
+          "trend": -5.2
         },
         {
           "slug": "ulysses-james-joyce",
           "name": "Ulysses by James Joyce 1st Ed",
           "image_url": "https://example.com/ulysses.jpg",
-          "teaser_price": 150000,
-          "trend": 28.3
+          "teaser_price": 25.5,
+          "trend": 10.2
         },
         {
           "slug": "the-hobbit",
           "name": "The Hobbit 1st Ed",
           "image_url": "https://example.com/hobbit.jpg",
-          "teaser_price": 60000,
-          "trend": 35.7
+          "teaser_price": 25.99,
+          "trend": 5.2
         }
       ]
     },
@@ -345,43 +345,43 @@
           "slug": "star-wars-1977",
           "name": "Star Wars 1977 Original Poster",
           "image_url": "https://example.com/star-wars-poster.jpg",
-          "teaser_price": 25000,
-          "trend": 12.3
+          "teaser_price": 2500,
+          "trend": 15
         },
         {
           "slug": "casablanca-1942",
           "name": "Casablanca 1942 One Sheet",
           "image_url": "https://example.com/casablanca.jpg",
-          "teaser_price": 15000,
-          "trend": 10.5
+          "teaser_price": 2500,
+          "trend": 12.5
         },
         {
           "slug": "the-godfather-1972",
           "name": "The Godfather 1972 Style A",
           "image_url": "https://example.com/godfather.jpg",
-          "teaser_price": 20000,
-          "trend": 15.8
+          "teaser_price": 150,
+          "trend": 12.5
         },
         {
           "slug": "jaws-1975",
           "name": "Jaws 1975 Original",
           "image_url": "https://example.com/jaws.jpg",
-          "teaser_price": 10000,
-          "trend": 14.2
+          "teaser_price": 250,
+          "trend": 12.5
         },
         {
           "slug": "psycho-1960",
           "name": "Psycho 1960 One Sheet",
           "image_url": "https://example.com/psycho.jpg",
-          "teaser_price": 18000,
-          "trend": 16.9
+          "teaser_price": 2500,
+          "trend": 15
         },
         {
           "slug": "citizen-kane-1941",
           "name": "Citizen Kane 1941 Teaser",
           "image_url": "https://example.com/citizen-kane.jpg",
-          "teaser_price": 30000,
-          "trend": 20.4
+          "teaser_price": 1500,
+          "trend": 12.5
         }
       ]
     },
@@ -393,44 +393,44 @@
         {
           "slug": "rolex-submariner",
           "name": "Rolex Submariner",
-          "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Rolex_Submariner_116610LN_%282020%29_%28cropped%29.png/800px-Rolex_Submariner_116610LN_%282020%29_%28cropped%29.png",
-          "teaser_price": 13500,
-          "trend": 12.4
+          "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Rolex-16610LV.jpg/256px-Rolex-16610LV.jpg",
+          "teaser_price": 10000,
+          "trend": 8.5
         },
         {
           "slug": "omega-seamaster",
           "name": "Omega Seamaster",
           "image_url": "https://www.omegawatches.com/media/catalog/product/cache/1/image/9df78eab33525d08d6e5fb8d27136e95/s/e/seamaster-diver-300m-co-axial-master-chronometer-42-mm-210-30-42-20-03-001_1.jpg",
           "teaser_price": 5500,
-          "trend": 8.9
+          "trend": 8.5
         },
         {
           "slug": "tag-heuer-carrera",
           "name": "TAG Heuer Carrera",
           "image_url": "https://www.tagheuer.com/media/catalog/product/cache/1/image/9df78eab33525d08d6e5fb8d27136e95/c/a/carrera-calibre-5-day-date-wbn2110-ba0625_1.jpg",
-          "teaser_price": 3500,
-          "trend": 6.1
+          "teaser_price": 5200,
+          "trend": 8.5
         },
         {
           "slug": "breitling-navitimer",
           "name": "Breitling Navitimer",
           "image_url": "https://www.breitling.com/media/catalog/product/cache/1/image/9df78eab33525d08d6e5fb8d27136e95/n/a/navitimer-b01-chronograph-41-ab0138a21b1x1_1.jpg",
-          "teaser_price": 8500,
-          "trend": 11.2
+          "teaser_price": 4500,
+          "trend": 8.5
         },
         {
-          "slug": "patek-philippe-nautilus",
+          "slug": "patek-nautilus",
           "name": "Patek Philippe Nautilus",
-          "image_url": "https://www.patek.com/sites/default/files/2023-07/5711_1NA_010_RGB.jpg",
-          "teaser_price": 55000,
-          "trend": 25.3
+          "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Patek_Philippe_Nautilus_5711-1A.jpg/256px-Patek_Philippe_Nautilus_5711-1A.jpg",
+          "teaser_price": 60000,
+          "trend": 15
         },
         {
           "slug": "audemars-piguet-royal-oak",
           "name": "Audemars Piguet Royal Oak",
           "image_url": "https://www.audemarspiguet.com/content/dam/ap/royal-oak-selfwinding-41mm-stainless-steel-15500st-1220st-01.jpg",
-          "teaser_price": 28000,
-          "trend": 18.7
+          "teaser_price": 25000,
+          "trend": 10
         }
       ]
     },
@@ -443,43 +443,43 @@
           "slug": "nike-air-jordan-1",
           "name": "Nike Air Jordan 1",
           "image_url": "https://static.nike.com/a/images/t_PDP_1280_v1/f_auto,q_auto:eco/0b1d2c3e-4f5a-4b2a-8c1d-3e9f8a7b6c5d/air-jordan-1-high-og-shoes-0b1d2c3e-4f5a-4b2a-8c1d-3e9f8a7b6c5d.jpg",
-          "teaser_price": 180,
-          "trend": 20.4
+          "teaser_price": 200,
+          "trend": 15
         },
         {
           "slug": "adidas-yeezy-boost",
           "name": "Adidas Yeezy Boost",
           "image_url": "https://www.adidas.com/us/yeezy-boost-350-v2.jpg",
           "teaser_price": 220,
-          "trend": 15.6
+          "trend": -12
         },
         {
           "slug": "nike-air-max-95",
           "name": "Nike Air Max 95 OG Neon",
           "image_url": "https://static.nike.com/a/images/t_PDP_1280_v1/f_auto,q_auto:eco/1a2b3c4d-5e6f-7g8h-9i0j-k1l2m3n4o5p6/air-max-95-og-shoes-1a2b3c4d-5e6f-7g8h-9i0j-k1l2m3n4o5p6.jpg",
-          "teaser_price": 200,
-          "trend": 15.6
+          "teaser_price": 175,
+          "trend": 5
         },
         {
           "slug": "air-jordan-3-black-cat",
           "name": "Air Jordan 3 Black Cat",
           "image_url": "https://static.nike.com/a/images/t_PDP_1280_v1/f_auto,q_auto:eco/2b3c4d5e-6f7g-8h9i-0j1k-l2m3n4o5p6q7/air-jordan-3-black-cat-shoes-2b3c4d5e-6f7g-8h9i-0j1k-l2m3n4o5p6q7.jpg",
-          "teaser_price": 250,
-          "trend": 25.1
+          "teaser_price": 350,
+          "trend": 12
         },
         {
           "slug": "new-balance-992",
           "name": "New Balance 992 Aged Well",
           "image_url": "https://www.newbalance.com/on/demandware.static/-/Sites-nb-us-Library/default/dw1a1b2c3d/992.jpg",
-          "teaser_price": 220,
-          "trend": 18.3
+          "teaser_price": 175,
+          "trend": 12.5
         },
         {
           "slug": "puma-speedcat",
           "name": "Puma Speedcat",
           "image_url": "https://www.puma.com/us/en/pd/speedcat-puma-white/381246.html",
-          "teaser_price": 100,
-          "trend": 30.5
+          "teaser_price": 85,
+          "trend": 12.5
         }
       ]
     },
@@ -492,43 +492,43 @@
           "slug": "david-hockney-portrait",
           "name": "David Hockney Portrait",
           "image_url": "https://maddoxgallery.com/media/catalog/product/cache/1/image/9df78eab33525d08d6e5fb8d27136e95/d/a/david-hockney-portrait-of-an-artist-pool-with-two-figures-1972.jpg",
-          "teaser_price": 90000000,
-          "trend": 15.2
+          "teaser_price": 250000,
+          "trend": 12.5
         },
         {
           "slug": "andy-warhol-marilyn",
           "name": "Andy Warhol Marilyn",
           "image_url": "https://maddoxgallery.com/media/catalog/product/cache/1/image/9df78eab33525d08d6e5fb8d27136e95/a/n/andy-warhol-marilyn-di-pt-109-ser-1962.jpg",
-          "teaser_price": 20000000,
-          "trend": 10.5
+          "teaser_price": 195000000,
+          "trend": 15.4
         },
         {
           "slug": "banksy-girl-with-balloon",
           "name": "Banksy Girl with Balloon",
           "image_url": "https://maddoxgallery.com/media/catalog/product/cache/1/image/9df78eab33525d08d6e5fb8d27136e95/b/a/banksy-girl-with-balloon-love-is-in-the-bin-2018.jpg",
-          "teaser_price": 25000000,
-          "trend": 22.1
+          "teaser_price": 1500000,
+          "trend": 25
         },
         {
           "slug": "jasper-johns-flag",
           "name": "Jasper Johns Flag",
           "image_url": "https://bluewater-ins.com/wp-content/uploads/2025/05/jasper-johns-flag-1958.jpg",
-          "teaser_price": 110000000,
-          "trend": 18.7
+          "teaser_price": 20000000,
+          "trend": 15
         },
         {
           "slug": "jeff-koons-rabbit",
           "name": "Jeff Koons Rabbit",
           "image_url": "https://bluewater-ins.com/wp-content/uploads/2025/05/jeff-koons-rabbit-1986.jpg",
           "teaser_price": 91000000,
-          "trend": 20.3
+          "trend": 58.3
         },
         {
           "slug": "gabriele-zago-abstract",
           "name": "Gabriele Zago Abstract",
           "image_url": "https://www.artelier.com/wp-content/uploads/2024/12/gabriele-zago.jpg",
-          "teaser_price": 50000,
-          "trend": 35.6
+          "teaser_price": 2500,
+          "trend": 15
         }
       ]
     },
@@ -541,43 +541,43 @@
           "slug": "chapoutier-ermitage-le-pavillon-2008",
           "name": "M. Chapoutier Ermitage Le Pavillon 2008",
           "image_url": "https://www.wineinvestment.com/wp-content/uploads/2025/08/chapoutier-ermitage.jpg",
-          "teaser_price": 500,
-          "trend": 38.7
+          "teaser_price": 250,
+          "trend": 10
         },
         {
           "slug": "vega-sicilia-valbuena-5-2016",
           "name": "Vega Sicilia Valbuena 5° 2016",
           "image_url": "https://www.wineinvestment.com/wp-content/uploads/2025/08/vega-sicilia.jpg",
           "teaser_price": 150,
-          "trend": 29
+          "trend": 10
         },
         {
           "slug": "penfolds-grange-2018",
           "name": "Penfolds Grange 2018",
           "image_url": "https://www.vinovest.co/wp-content/uploads/penfolds-grange.jpg",
-          "teaser_price": 700,
-          "trend": 25.4
+          "teaser_price": 650,
+          "trend": 8
         },
         {
           "slug": "henschke-hill-of-grace-2019",
           "name": "Henschke Hill of Grace 2019",
           "image_url": "https://www.vinovest.co/wp-content/uploads/henschke-hill-of-grace.jpg",
-          "teaser_price": 300,
-          "trend": 18.2
+          "teaser_price": 650,
+          "trend": 8
         },
         {
           "slug": "brotte-creation-grosset-red-2022",
           "name": "Brotte Création Grosset Red 2022",
           "image_url": "https://www.wineenthusiast.com/wp-content/uploads/2025/09/brotte-creation-grosset.jpg",
-          "teaser_price": 20,
-          "trend": 12.1
+          "teaser_price": 25.99,
+          "trend": 5.2
         },
         {
           "slug": "jim-barry-the-armagh-2020",
           "name": "Jim Barry The Armagh 2020",
           "image_url": "https://www.vinovest.co/wp-content/uploads/jim-barry-armagh.jpg",
-          "teaser_price": 200,
-          "trend": 15.8
+          "teaser_price": 45.99,
+          "trend": 8.5
         }
       ]
     },
@@ -590,43 +590,43 @@
           "slug": "union-city-ca",
           "name": "Union City, CA",
           "image_url": "https://constructioncoverage.com/wp-content/uploads/union-city-ca.jpg",
-          "teaser_price": 950000,
-          "trend": 94.3
+          "teaser_price": 850000,
+          "trend": 5.2
         },
         {
           "slug": "lawrence-ma",
           "name": "Lawrence, MA",
           "image_url": "https://constructioncoverage.com/wp-content/uploads/lawrence-ma.jpg",
-          "teaser_price": 450000,
-          "trend": 94
+          "teaser_price": 350000,
+          "trend": 5.2
         },
         {
           "slug": "santa-clara-ca",
           "name": "Santa Clara, CA",
           "image_url": "https://constructioncoverage.com/wp-content/uploads/santa-clara-ca.jpg",
-          "teaser_price": 1400000,
-          "trend": 91.7
+          "teaser_price": 1200000,
+          "trend": 5.2
         },
         {
           "slug": "boise-id",
           "name": "Boise, ID",
           "image_url": "https://www.quickenloans.com/wp-content/uploads/boise-id.jpg",
-          "teaser_price": 480000,
-          "trend": 85.2
+          "teaser_price": 450000,
+          "trend": 5.2
         },
         {
           "slug": "st-petersburg-fl",
           "name": "St. Petersburg, FL",
           "image_url": "https://www.quickenloans.com/wp-content/uploads/st-petersburg-fl.jpg",
           "teaser_price": 350000,
-          "trend": 78.4
+          "trend": 5.2
         },
         {
           "slug": "omaha-ne",
           "name": "Omaha, NE",
           "image_url": "https://realestate.usnews.com/wp-content/uploads/omaha-ne.jpg",
-          "teaser_price": 280000,
-          "trend": 76.2
+          "teaser_price": 250000,
+          "trend": 5.2
         }
       ]
     },
@@ -667,15 +667,15 @@
           "slug": "renewable-energy-etf",
           "name": "Renewable Energy ETF",
           "image_url": "https://example.com/renewable-etf.jpg",
-          "teaser_price": 5000,
-          "trend": 30.1
+          "teaser_price": 52.75,
+          "trend": 18.3
         },
         {
           "slug": "farmland-investment",
           "name": "Farmland Investment Trust",
           "image_url": "https://example.com/farmland.jpg",
-          "teaser_price": 10000,
-          "trend": 18.7
+          "teaser_price": 4500,
+          "trend": 7.5
         }
       ]
     },
@@ -695,36 +695,36 @@
           "slug": "data-center-reit",
           "name": "Data Center REIT",
           "image_url": "https://example.com/data-center.jpg",
-          "teaser_price": 20000,
-          "trend": 120.5
+          "teaser_price": 85.5,
+          "trend": 12.3
         },
         {
           "slug": "gpu-manufacturing",
           "name": "GPU Manufacturing Stock",
           "image_url": "https://example.com/gpu-stock.jpg",
-          "teaser_price": 100,
-          "trend": 180.2
+          "teaser_price": 1200,
+          "trend": 15
         },
         {
           "slug": "cloud-computing-etf",
           "name": "Cloud Computing ETF",
           "image_url": "https://example.com/cloud-etf.jpg",
-          "teaser_price": 5000,
-          "trend": 45.3
+          "teaser_price": 25.67,
+          "trend": 18.5
         },
         {
           "slug": "semiconductor-ai-chip",
           "name": "AI Semiconductor Chip",
           "image_url": "https://example.com/ai-chip.jpg",
-          "teaser_price": 150,
-          "trend": 95.6
+          "teaser_price": 2500,
+          "trend": 35.5
         },
         {
           "slug": "quantum-computing-fund",
           "name": "Quantum Computing Fund",
           "image_url": "https://example.com/quantum-fund.jpg",
-          "teaser_price": 10000,
-          "trend": 300.1
+          "teaser_price": 125.5,
+          "trend": 18.75
         }
       ]
     },
@@ -737,43 +737,43 @@
           "slug": "investment-grade-bonds",
           "name": "Investment-Grade Corporate Bonds",
           "image_url": "https://example.com/bonds.jpg",
-          "teaser_price": 1000,
-          "trend": 5.2
+          "teaser_price": 102.5,
+          "trend": 3.75
         },
         {
           "slug": "municipal-bonds",
           "name": "Municipal Bonds AAA",
           "image_url": "https://example.com/muni-bonds.jpg",
-          "teaser_price": 5000,
-          "trend": 4.8
+          "teaser_price": 100.5,
+          "trend": 2.75
         },
         {
           "slug": "high-yield-bonds",
           "name": "High-Yield Junk Bonds",
           "image_url": "https://example.com/junk-bonds.jpg",
-          "teaser_price": 2000,
-          "trend": 8.1
+          "teaser_price": 95.5,
+          "trend": -2.75
         },
         {
           "slug": "t-bonds-10-year",
           "name": "10-Year Treasury Bonds",
           "image_url": "https://example.com/t-bonds.jpg",
-          "teaser_price": 1000,
-          "trend": 3.5
+          "teaser_price": 112.5,
+          "trend": -2.75
         },
         {
           "slug": "corporate-bond-etf",
           "name": "Corporate Bond ETF",
           "image_url": "https://example.com/corp-etf.jpg",
-          "teaser_price": 5000,
-          "trend": 6.2
+          "teaser_price": 95.5,
+          "trend": 3.2
         },
         {
           "slug": "emerging-market-bonds",
           "name": "Emerging Market Bonds",
           "image_url": "https://example.com/em-bonds.jpg",
-          "teaser_price": 3000,
-          "trend": 10.4
+          "teaser_price": 95.5,
+          "trend": 3.2
         }
       ]
     },
@@ -786,43 +786,43 @@
           "slug": "t-bills-3-month",
           "name": "3-Month T-Bills",
           "image_url": "https://example.com/t-bills.jpg",
-          "teaser_price": 1000,
-          "trend": 4.8
+          "teaser_price": 98.75,
+          "trend": 2.5
         },
         {
           "slug": "t-bills-6-month",
           "name": "6-Month T-Bills",
           "image_url": "https://example.com/t-bills-6m.jpg",
-          "teaser_price": 1000,
-          "trend": 4.9
+          "teaser_price": 98.5,
+          "trend": 2.5
         },
         {
           "slug": "t-bills-1-year",
           "name": "1-Year T-Bills",
           "image_url": "https://example.com/t-bills-1y.jpg",
-          "teaser_price": 1000,
-          "trend": 5
+          "teaser_price": 98.5,
+          "trend": 2.75
         },
         {
           "slug": "t-bills-auction",
           "name": "T-Bills Auction Yield",
           "image_url": "https://example.com/t-bills-auction.jpg",
-          "teaser_price": 1000,
-          "trend": 4.7
+          "teaser_price": 99.5,
+          "trend": 2.5
         },
         {
           "slug": "t-bills-etf",
           "name": "T-Bills ETF (SGOV)",
           "image_url": "https://example.com/sgov-etf.jpg",
-          "teaser_price": 100,
-          "trend": 5.1
+          "teaser_price": 23.5,
+          "trend": 2.5
         },
         {
           "slug": "t-bills-floating-rate",
           "name": "Floating Rate T-Bills",
           "image_url": "https://example.com/floating-t-bills.jpg",
-          "teaser_price": 1000,
-          "trend": 5.3
+          "teaser_price": 99.85,
+          "trend": 2.5
         }
       ]
     },
@@ -842,8 +842,8 @@
           "slug": "capital-one-360",
           "name": "Capital One 360 Performance",
           "image_url": "https://example.com/capital-one.jpg",
-          "teaser_price": 10000,
-          "trend": 4.9
+          "teaser_price": 4.3,
+          "trend": 0.25
         },
         {
           "slug": "discover-online",
@@ -884,7 +884,7 @@
           "slug": "private-markets-fund",
           "name": "Global Private Markets Fund",
           "image_url": "https://example.com/private-equity.jpg",
-          "teaser_price": 100000,
+          "teaser_price": 250,
           "trend": 12.5
         },
         {
@@ -898,8 +898,8 @@
           "slug": "buyout-fund-large-cap",
           "name": "Large-Cap Buyout Fund",
           "image_url": "https://example.com/buyout-fund.jpg",
-          "teaser_price": 200000,
-          "trend": 10.1
+          "teaser_price": 2500000000,
+          "trend": 12.5
         },
         {
           "slug": "distressed-debt-fund",
@@ -912,8 +912,8 @@
           "slug": "secondaries-fund",
           "name": "Private Equity Secondaries",
           "image_url": "https://example.com/secondaries.jpg",
-          "teaser_price": 150000,
-          "trend": 14.3
+          "teaser_price": 1000000,
+          "trend": 12.5
         },
         {
           "slug": "impact-investing-pe",
@@ -933,36 +933,36 @@
           "slug": "global-stocks-index",
           "name": "MSCI World Equities Index",
           "image_url": "https://example.com/equities.jpg",
-          "teaser_price": 5000,
-          "trend": 10.2
+          "teaser_price": 3250.75,
+          "trend": 12.5
         },
         {
           "slug": "s-p-500-etf",
           "name": "S&P 500 ETF (SPY)",
           "image_url": "https://example.com/spy-etf.jpg",
-          "teaser_price": 500,
-          "trend": 12.1
+          "teaser_price": 573.25,
+          "trend": 22.5
         },
         {
           "slug": "nasdaq-100",
           "name": "Nasdaq 100 ETF (QQQ)",
           "image_url": "https://example.com/qqq-etf.jpg",
-          "teaser_price": 450,
-          "trend": 18.5
+          "teaser_price": 20450.27,
+          "trend": 25.3
         },
         {
           "slug": "emerging-markets-equities",
           "name": "Emerging Markets Equities",
           "image_url": "https://example.com/em-equities.jpg",
-          "teaser_price": 3000,
-          "trend": 8.7
+          "teaser_price": 120.5,
+          "trend": 8.75
         },
         {
           "slug": "small-cap-equities",
           "name": "Russell 2000 Small-Cap",
           "image_url": "https://example.com/russell-2000.jpg",
-          "teaser_price": 2000,
-          "trend": 15.3
+          "teaser_price": 120.5,
+          "trend": 8.75
         },
         {
           "slug": "dividend-aristocrats",
@@ -982,43 +982,43 @@
           "slug": "gold-futures",
           "name": "Gold Futures Contract",
           "image_url": "https://example.com/gold.jpg",
-          "teaser_price": 2500,
-          "trend": 20.1
+          "teaser_price": 2685.5,
+          "trend": 22.7
         },
         {
           "slug": "silver-etf",
           "name": "Silver ETF (SLV)",
           "image_url": "https://example.com/silver-etf.jpg",
-          "teaser_price": 25,
-          "trend": 18.4
+          "teaser_price": 31.25,
+          "trend": 12.5
         },
         {
           "slug": "oil-wti-futures",
           "name": "WTI Oil Futures",
           "image_url": "https://example.com/wti-oil.jpg",
-          "teaser_price": 80,
-          "trend": 5.2
+          "teaser_price": 71.23,
+          "trend": -5.4
         },
         {
           "slug": "copper-futures",
           "name": "Copper Futures",
           "image_url": "https://example.com/copper.jpg",
-          "teaser_price": 4.5,
-          "trend": 12.3
+          "teaser_price": 4.25,
+          "trend": -5.3
         },
         {
           "slug": "agricultural-soybeans",
           "name": "Soybeans Futures",
           "image_url": "https://example.com/soybeans.jpg",
-          "teaser_price": 12,
-          "trend": 8.1
+          "teaser_price": 10.25,
+          "trend": -5.3
         },
         {
           "slug": "natural-gas-futures",
           "name": "Natural Gas Futures",
           "image_url": "https://example.com/natural-gas.jpg",
-          "teaser_price": 3,
-          "trend": 25.6
+          "teaser_price": 2.85,
+          "trend": -12.3
         }
       ]
     }
