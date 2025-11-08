@@ -18,6 +18,7 @@ export default function ItemPage() {
   useEffect(() => {
     if (!slug) return;
     setLoading(true);
+    setError('');
     fetch('/api/track', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -25,22 +26,27 @@ export default function ItemPage() {
     })
       .then(res => res.json())
       .then(data => {
-        if (data.error) setError(data.error);
-        else {
+        if (data.error) {
+          setError(data.error);
+        } else {
           setPrice(data.currentPrice);
-          setHistory(data.history);
-          setSpecs(data.specs);
+          setHistory(data.history || []);
+          setSpecs(data.specs || {});
         }
       })
       .catch(() => setError('Load failed—back to search?'))
       .finally(() => setLoading(false));
   }, [slug]);
 
-  const overallTrend = history.length > 1 ? 
-    ((history[history.length - 1].price - history[0].price) / history[0].price * 100).toFixed(1) : 0;
+  const overallTrendNum = history.length > 1 && history[0].price > 0
+    ? (history[history.length - 1].price - history[0].price) / history[0].price * 100
+    : 0;
+  const overallTrend = overallTrendNum.toFixed(1);
+  const showPlus = overallTrendNum > 0;
+  const trendLabel = overallTrendNum === 0 ? 'Stable' : `${showPlus ? '+' : ''}${overallTrend}% (1Y)`;
 
-  if (loading) return <div className="flex justify-center items-center h-64"><p>Loading {slug}...</p></div>;
-  if (error) return <div className="text-red-600 flex items-center"><AlertCircle className="w-5 h-5 mr-2" /> {error}</div>;
+  if (loading) return <div className="flex justify-center items-center h-screen"><p>Loading {slug}...</p></div>;
+  if (error) return <div className="text-red-600 flex items-center justify-center h-screen"><AlertCircle className="w-5 h-5 mr-2" /> {error}</div>;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 py-12">
@@ -49,20 +55,22 @@ export default function ItemPage() {
         <div className="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
           {/* Header */}
           <div className="p-8 bg-gradient-to-r from-blue-50 to-indigo-50 border-b">
-            <div className="flex items-center justify-between">
-              <h1 className="text-4xl font-bold text-gray-900 capitalize">{slug.replace(/-/g, ' ')}</h1>
-              {specs['Image URL'] && (
-                <img src={specs['Image URL']} alt={slug} className="mt-4 w-64 h-64 object-cover rounded-lg shadow-md mx-auto" />
-              )}
+            <div className="flex items-center justify-between mb-4">
+              <h1 className="text-4xl font-bold text-gray-900 capitalize">{slug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</h1>
               <div className={`flex items-center space-x-2 px-4 py-2 rounded-lg ${
-                overallTrend >= 0 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                overallTrendNum >= 0 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
               }`}>
-                <TrendingUp className={`w-4 h-4 ${overallTrend >= 0 ? '' : 'rotate-180'}`} />
-                <span>{overallTrend >= 0 ? '+' : ''}{overallTrend}% (1Y)</span>
+                <TrendingUp className={`w-4 h-4 ${overallTrendNum < 0 ? 'rotate-180' : ''}`} />
+                <span>{trendLabel}</span>
               </div>
             </div>
-            <p className="text-5xl font-bold text-gray-900 mt-2">${price?.toLocaleString() || 'N/A'}</p>
-            <p className="text-gray-600">Live value—updated moments ago.</p>
+            {specs['Image URL'] && (
+              <div className="flex justify-center mb-6">
+                <img src={specs['Image URL']} alt={slug} className="w-64 h-64 object-cover rounded-lg shadow-md" />
+              </div>
+            )}
+            <p className="text-5xl font-bold text-gray-900 mt-2 text-center">${price?.toLocaleString() || 'N/A'}</p>
+            <p className="text-gray-600 text-center">Live value—updated moments ago.</p>
           </div>
 
           <div className="grid md:grid-cols-2 gap-8 p-8">
@@ -70,7 +78,9 @@ export default function ItemPage() {
             <div>
               <h2 className="text-2xl font-semibold mb-4 text-gray-700">Key Specs</h2>
               <dl className="space-y-3">
-                {Object.entries(specs).map(([key, value]) => (
+                {Object.entries(specs)
+                  .filter(([key]) => key !== 'Image URL') // Hide image URL from specs list to avoid redundancy
+                  .map(([key, value]) => (
                   <div key={key} className="flex justify-between text-sm">
                     <dt className="text-gray-500">{key}:</dt>
                     <dd className="font-medium text-gray-900">{value}</dd>
@@ -105,11 +115,11 @@ export default function ItemPage() {
             <h3 className="text-xl font-semibold mb-4">Related Items</h3>
             <div className="flex space-x-4 overflow-x-auto">
               {['ethereum', 'litecoin', 'dogecoin'].map((rel) => (
-                <a key={rel} href={`/item/${rel}`} className="flex flex-col items-center p-4 bg-white rounded-lg shadow-md hover:shadow-lg transition">
+                <a key={rel} href={`/item/${rel}`} className="flex flex-col items-center p-4 bg-white rounded-lg shadow-md hover:shadow-lg transition min-w-[100px]">
                   <div className="w-16 h-16 bg-blue-100 rounded-full mb-2 flex items-center justify-center">
                     <span className="text-blue-600 font-bold">{rel.slice(0,3).toUpperCase()}</span>
                   </div>
-                  <p className="text-sm font-medium">{rel}</p>
+                  <p className="text-sm font-medium text-center">{rel}</p>
                 </a>
               ))}
             </div>
