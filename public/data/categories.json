@@ -45,14 +45,14 @@
           "label": "Tech Stocks",
           "icon": "💻",
           "items": [
-            { "slug": "nvda", "name": "NVDA Stock", "image_url": "https://logo.clearbit.com/nvidia.com", "teaser_price": 140, "trend": 85 },
+            { "slug": "nvda", "name": "NVDA Stock", "image_url": "https://source.unsplash.com/256x256/?nvidia,technology", "teaser_price": 140, "trend": 85 },
             { "slug": "avgo", "name": "AVGO Stock", "image_url": "https://logo.clearbit.com/broadcom.com", "teaser_price": 178.25, "trend": 62.34 },
             { "slug": "tsla", "name": "TSLA Stock", "image_url": "https://logo.clearbit.com/tesla.com", "teaser_price": 248.50, "trend": 45.2 }
           ]
         }
       ],
       "items": [
-        { "slug": "nvda", "name": "NVDA Stock", "image_url": "https://logo.clearbit.com/nvidia.com", "teaser_price": 140, "trend": 85 },
+        { "slug": "nvda", "name": "NVDA Stock", "image_url": "https://source.unsplash.com/256x256/?nvidia,technology", "teaser_price": 140, "trend": 85 },
         { "slug": "avgo", "name": "AVGO Stock", "image_url": "https://logo.clearbit.com/broadcom.com", "teaser_price": 178.25, "trend": 62.34 },
         { "slug": "jpm", "name": "JPM Stock", "image_url": "https://logo.clearbit.com/jpmorgan.com", "teaser_price": 144.23, "trend": 23.5 },
         { "slug": "lly", "name": "LLY Stock", "image_url": "https://logo.clearbit.com/lilly.com", "teaser_price": 140, "trend": 85.5 },

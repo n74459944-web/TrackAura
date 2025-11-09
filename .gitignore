@@ -44,3 +44,12 @@ next-env.d.ts
 *.env*.local
 
 .vercel
+
+# TrackAura Supabase (from dashboard: Settings > API)
+NEXT_PUBLIC_SUPABASE_URL=https://your-project-ref.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...your-anon-key-here
+
+# TrackAura API Keys (for seeding: CoinGecko free, Alpha Vantage signup)
+COINGECKO_API_KEY=your-coingecko-key-if-needed  # Optional, free tier no key
+ALPHA_VANTAGE_API_KEY=your-alphavantage-key
+GROK_API_KEY=your-grok-key  # From x.ai for item details

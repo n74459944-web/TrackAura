@@ -14,9 +14,9 @@ interface CategoryItem {
 
 export default function CategoryPage() {
   const params = useParams();
-  const pathParts = (params.name as string[] || params.name?.toString().split('/') || []).filter(Boolean);  // e.g., ['crypto', 'altcoins'] or ['crypto']
-  const mainCat = pathParts[0] || 'crypto';  // Fallback to crypto for safety
-  const subCat = pathParts[1];  // Undefined for main cats
+  const pathParts = (params.name as string[] || params.name?.toString().split('/') || []).filter(Boolean);
+  const mainCat = pathParts[0] || 'crypto';
+  const subCat = pathParts[1];
   const [items, setItems] = useState<CategoryItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -33,7 +33,7 @@ export default function CategoryPage() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ 
         item: fetchSlug, 
-        category: mainCat  // Pass main for API nested lookup
+        category: mainCat 
       }),
     })
       .then(res => {
@@ -56,7 +56,7 @@ export default function CategoryPage() {
         setError('Load failed—check console & refresh?');
       })
       .finally(() => setLoading(false));
-  }, [mainCat, subCat]);  // Re-fetch on path change
+  }, [mainCat, subCat]);
 
   if (loading) return <div className="flex justify-center items-center h-64"><p>Loading {mainCat} {subCat ? `> ${subCat}` : ''}...</p></div>;
   if (error) return (
@@ -93,7 +93,18 @@ export default function CategoryPage() {
                 src={item.image_url} 
                 alt={item.name} 
                 className="w-full h-48 object-cover" 
-                onError={(e) => e.currentTarget.src = `https://via.placeholder.com/384x256/4F46E5/FFFFFF?text=${item.name.substring(0, 10)}`}
+                onError={(e) => {
+                  // FIXED: Chain fallbacks—Clearbit blocked? Unsplash dynamic, then placeholder
+                  const target = e.currentTarget as HTMLImageElement;
+                  if (item.image_url.includes('logo.clearbit.com')) {
+                    // Unsplash query based on item (e.g., ?technology for NVDA)
+                    const query = item.name.toLowerCase().includes('stock') ? 'technology' : 'finance';
+                    target.src = `https://source.unsplash.com/384x256/?${query}`;
+                  } else {
+                    target.src = `https://via.placeholder.com/384x256/4F46E5/FFFFFF?text=${item.name.substring(0, 8)}`;
+                  }
+                  target.onerror = null;  // Stop loop
+                }}
               />
               <div className="p-6">
                 <h3 className="text-xl font-semibold mb-2">{item.name}</h3>

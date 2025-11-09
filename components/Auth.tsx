@@ -3,11 +3,11 @@
 
 import { useState } from 'react';
 import { supabase } from '@/lib/supabase';
-import { useAuth } from '@/app/layout';
+import { useAuth } from '@/components/AuthWrapper';  // NEW: From wrapper
 import Link from 'next/link';
 
 export default function Auth() {
-  const { session, loading } = useAuth();
+  const { session, loading } = useAuth();  // FIXED: Typed, works post-wrapper
   const [showModal, setShowModal] = useState(false);
   const [email, setEmail] = useState('');
   const [loadingAuth, setLoadingAuth] = useState(false);
