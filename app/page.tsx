@@ -3,15 +3,12 @@ import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { Search, TrendingUp, ChevronDown, Menu } from 'lucide-react';
 import Auth from '@/components/Auth';
-import { supabase } from '@/lib/supabase';  // Shared client
 
 interface Category {
-  id: string;
   name: string;
   label: string;
   icon: string;
-  slug: string;  // FIXED: Explicit for TS
-  children?: Category[];  // Recursive for nesting
+  subCategories?: { name: string; label: string; icon: string }[];
 }
 
 export default function HomePage() {
@@ -19,25 +16,12 @@ export default function HomePage() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [expandedCats, setExpandedCats] = useState<Set<string>>(new Set());
   const [showSidebar, setShowSidebar] = useState(false);
-  const [loadingCats, setLoadingCats] = useState(true);
 
-  // FIXED: Dynamic fetch with .is(null) + explicit slug in children select
   useEffect(() => {
-    async function fetchCategories() {
-      const { data, error } = await supabase
-        .from('categories')
-        .select('id, name, label, icon, slug, *, children:categories(id, name, label, icon, slug, *)')  // FIXED: Recursive + slug
-        .is('parent_id', null)  // FIXED: .is() for null checks
-        .order('name');
-      if (error) {
-        console.error('Category fetch error:', error);
-        setCategories([]);  // Fallback to empty
-      } else {
-        setCategories(data || []);
-      }
-      setLoadingCats(false);
-    }
-    fetchCategories();
+    fetch('/data/categories.json')
+      .then(res => res.json())
+      .then(data => setCategories(data.categories))
+      .catch(() => setCategories([]));
   }, []);
 
   useEffect(() => {
@@ -56,14 +40,14 @@ export default function HomePage() {
     }
   };
 
-  const toggleSubCat = (catId: string, e: React.MouseEvent) => {
+  const toggleSubCat = (catName: string, e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     const newExpanded = new Set(expandedCats);
-    if (newExpanded.has(catId)) {
-      newExpanded.delete(catId);
+    if (newExpanded.has(catName)) {
+      newExpanded.delete(catName);
     } else {
-      newExpanded.add(catId);
+      newExpanded.add(catName);
     }
     setExpandedCats(newExpanded);
   };
@@ -77,17 +61,6 @@ export default function HomePage() {
     closeSidebar();
   };
 
-  if (loadingCats) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
-        <div className="text-center">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">TrackAura</h1>
-          <p className="text-gray-600">Loading categories...</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
       {/* Mobile Hamburger */}
@@ -100,47 +73,48 @@ export default function HomePage() {
 
       <div className="max-w-7xl mx-auto px-2 lg:px-4 py-12 grid grid-cols-1 lg:grid-cols-4 gap-8">
         
-        {/* Left Sidebar (Dynamic from Supabase) */}
+        {/* Left Sidebar */}
         <aside 
           className={`lg:col-span-1 bg-white rounded-xl shadow-md p-6 h-fit sticky top-12 transition-all duration-300 ease-in-out overflow-y-auto max-h-screen z-50 ${
             showSidebar ? 'fixed inset-y-0 left-0 w-64 transform translate-x-0 shadow-2xl' : '-translate-x-full lg:translate-x-0'
           }`}
           style={{ pointerEvents: 'auto' }}
         >
-          <h2 className="text-xl font-bold mb-2 text-gray-900 text-center">Categories ({categories.length})</h2>
+          <h2 className="text-xl font-bold mb-2 text-gray-900 text-center">Categories</h2>
           <nav className="space-y-2" style={{ pointerEvents: 'auto' }}>
             {categories.map((cat) => (
-              <div key={cat.id} className="border-b border-gray-200 pb-2 last:border-b-0">
+              <div key={cat.name} className="border-b border-gray-200 pb-2 last:border-b-0">  {/* FIXED: Added key */}
                 <div className="flex justify-between items-center">
                   <button
-                    onClick={(e) => handleLinkClick(e, `/categories/${cat.slug}`)}
+                    onClick={(e) => handleLinkClick(e, `/categories/${cat.name}`)}
                     className="flex items-center flex-1 p-2 hover:bg-gray-50 rounded text-left"
                     style={{ pointerEvents: 'auto' }}
                   >
                     <span className="text-xl mr-2">{cat.icon}</span>
                     <span className="font-medium">{cat.label}</span>
                   </button>
-                  {cat.children && cat.children.length > 0 && (
+                  {cat.subCategories && (
                     <button
-                      onClick={(e) => toggleSubCat(cat.id, e)}
+                      onClick={(e) => toggleSubCat(cat.name, e)}
                       className="p-2 hover:bg-gray-50 rounded"
                     >
-                      <ChevronDown className={`w-4 h-4 transition-transform ${expandedCats.has(cat.id) ? 'rotate-180' : ''}`} />
+                      <ChevronDown className={`w-4 h-4 transition-transform ${expandedCats.has(cat.name) ? 'rotate-180' : ''}`} />
                     </button>
                   )}
                 </div>
-                {cat.children && expandedCats.has(cat.id) && (
-                  <ul className="ml-6 mt-2 space-y-1 text-sm transition-all duration-300 overflow-hidden max-h-96 opacity-100">
-                    {cat.children.map((sub) => (
-                      <li key={sub.id}>
-                        <button
-                          onClick={(e) => handleLinkClick(e, `/categories/${cat.slug}/${sub.slug}`)}
-                          className="flex items-center text-blue-600 hover:text-blue-800 p-1 rounded w-full text-left"
-                          style={{ pointerEvents: 'auto' }}
+                {/* FIXED: Your snippet integrated—renders subs when expanded */}
+                {cat.subCategories && expandedCats.has(cat.name) && (
+                  <ul className="ml-6 mt-2 space-y-1 text-sm">
+                    {cat.subCategories.map((sub) => (
+                      <li key={sub.name}>
+                        <Link 
+                          href={`/categories/${cat.name}/${sub.name}`} 
+                          className="flex items-center text-blue-600 hover:text-blue-800 p-1 rounded w-full text-left transition-colors"
+                          onClick={closeSidebar}  // Mobile close
                         >
                           <span className="text-xs mr-2">{sub.icon}</span>
                           <span className="font-medium">{sub.label}</span>
-                        </button>
+                        </Link>
                       </li>
                     ))}
                   </ul>
@@ -148,9 +122,6 @@ export default function HomePage() {
               </div>
             ))}
           </nav>
-          {categories.length === 0 && (
-            <p className="text-center text-gray-500 mt-4">No categories yet—run npm run seed!</p>
-          )}
         </aside>
 
         {/* Main Content */}
@@ -184,7 +155,7 @@ export default function HomePage() {
             </form>
           </div>
 
-          {/* Quick Item Teasers (Static for now—dynamize later from Supabase top-trends) */}
+          {/* Quick Item Teasers */}
           <div className="grid md:grid-cols-3 gap-6 mb-12">
             {['bitcoin', 'rolex-submariner', 'nike-air-jordan-1'].map((slug) => (
               <Link key={slug} href={`/item/${slug}`} className="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition">

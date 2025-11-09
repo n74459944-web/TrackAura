@@ -10,9 +10,9 @@
           "label": "Altcoins",
           "icon": "🪙",
           "items": [
-            { "slug": "cardano", "name": "Cardano", "image_url": "https://coin-images.coingecko.com/coins/images/975/large/cardano.png?1696501400", "teaser_price": 0.35, "trend": 1.2 },
-            { "slug": "polkadot", "name": "Polkadot", "image_url": "https://coin-images.coingecko.com/coins/images/12171/large/polkadot.png?1696501400", "teaser_price": 4.12, "trend": -0.8 },
-            { "slug": "chainlink", "name": "Chainlink", "image_url": "https://coin-images.coingecko.com/coins/images/877/large/chainlink-new-logo.png?1696501400", "teaser_price": 11.45, "trend": 2.1 }
+            { "slug": "cardano", "name": "Cardano", "image_url": "https://coin-images.coingecko.com/coins/images/975/large/cardano.png", "teaser_price": 0.35, "trend": 1.2 },
+            { "slug": "polkadot", "name": "Polkadot", "image_url": "https://coin-images.coingecko.com/coins/images/12171/large/polkadot.png", "teaser_price": 4.12, "trend": -0.8 },
+            { "slug": "chainlink", "name": "Chainlink", "image_url": "https://coin-images.coingecko.com/coins/images/877/large/chainlink-new-logo.png", "teaser_price": 11.45, "trend": 2.1 }
           ]
         },
         {
@@ -20,19 +20,19 @@
           "label": "DeFi",
           "icon": "💎",
           "items": [
-            { "slug": "uniswap", "name": "Uniswap", "image_url": "https://coin-images.coingecko.com/coins/images/12504/large/uniswap-uni.png?1696501400", "teaser_price": 7.89, "trend": 3.4 },
-            { "slug": "avalanche", "name": "Avalanche", "image_url": "https://coin-images.coingecko.com/coins/images/12559/large/Avalanche_Circle_RedWhite_Trans.png?1696512369", "teaser_price": 26.50, "trend": 1.8 },
-            { "slug": "aave", "name": "Aave", "image_url": "https://coin-images.coingecko.com/coins/images/12645/large/AAVE.png?1696514909", "teaser_price": 102.30, "trend": -1.2 }
+            { "slug": "uniswap", "name": "Uniswap", "image_url": "https://coin-images.coingecko.com/coins/images/12504/large/uniswap-uni.png", "teaser_price": 7.89, "trend": 3.4 },
+            { "slug": "avalanche", "name": "Avalanche", "image_url": "https://coin-images.coingecko.com/coins/images/12559/large/Avalanche_Circle_RedWhite_Trans.png", "teaser_price": 26.50, "trend": 1.8 },
+            { "slug": "aave", "name": "Aave", "image_url": "https://coin-images.coingecko.com/coins/images/12645/large/AAVE.png", "teaser_price": 102.30, "trend": -1.2 }
           ]
         }
       ],
       "items": [
-        { "slug": "bitcoin", "name": "Bitcoin", "image_url": "https://coin-images.coingecko.com/coins/images/1/large/bitcoin.png?1696501400", "teaser_price": 43150.23, "trend": 1.25 },
-        { "slug": "ethereum", "name": "Ethereum", "image_url": "https://coin-images.coingecko.com/coins/images/279/large/ethereum.png?1696501628", "teaser_price": 2290.76, "trend": 0.87 },
-        { "slug": "tether", "name": "Tether", "image_url": "https://coin-images.coingecko.com/coins/images/325/large/Tether.png?1696501661", "teaser_price": 1, "trend": 0.02 },
-        { "slug": "binancecoin", "name": "BNB", "image_url": "https://coin-images.coingecko.com/coins/images/825/large/bnb-icon2_2x.png?1696501970", "teaser_price": 315.42, "trend": -0.54 },
-        { "slug": "ripple", "name": "XRP", "image_url": "https://coin-images.coingecko.com/coins/images/44/large/xrp-symbol-white-128.png?1696501442", "teaser_price": 0.62, "trend": 2.13 },
-        { "slug": "solana", "name": "Solana", "image_url": "https://coin-images.coingecko.com/coins/images/4128/large/solana.png?1718769756", "teaser_price": 104.89, "trend": 3.76 }
+        { "slug": "bitcoin", "name": "Bitcoin", "image_url": "https://coin-images.coingecko.com/coins/images/1/large/bitcoin.png", "teaser_price": 43150.23, "trend": 1.25 },
+        { "slug": "ethereum", "name": "Ethereum", "image_url": "https://coin-images.coingecko.com/coins/images/279/large/ethereum.png", "teaser_price": 2290.76, "trend": 0.87 },
+        { "slug": "tether", "name": "Tether", "image_url": "https://coin-images.coingecko.com/coins/images/325/large/Tether.png", "teaser_price": 1, "trend": 0.02 },
+        { "slug": "binancecoin", "name": "BNB", "image_url": "https://coin-images.coingecko.com/coins/images/825/large/bnb-icon2_2x.png", "teaser_price": 315.42, "trend": -0.54 },
+        { "slug": "ripple", "name": "XRP", "image_url": "https://coin-images.coingecko.com/coins/images/44/large/xrp-symbol-white-128.png", "teaser_price": 0.62, "trend": 2.13 },
+        { "slug": "solana", "name": "Solana", "image_url": "https://coin-images.coingecko.com/coins/images/4128/large/solana.png", "teaser_price": 104.89, "trend": 3.76 }
       ]
     },
     {
@@ -46,18 +46,18 @@
           "icon": "💻",
           "items": [
             { "slug": "nvda", "name": "NVDA Stock", "image_url": "https://source.unsplash.com/256x256/?nvidia,technology", "teaser_price": 140, "trend": 85 },
-            { "slug": "avgo", "name": "AVGO Stock", "image_url": "https://logo.clearbit.com/broadcom.com", "teaser_price": 178.25, "trend": 62.34 },
-            { "slug": "tsla", "name": "TSLA Stock", "image_url": "https://logo.clearbit.com/tesla.com", "teaser_price": 248.50, "trend": 45.2 }
+            { "slug": "avgo", "name": "AVGO Stock", "image_url": "https://source.unsplash.com/256x256/?broadcom,tech", "teaser_price": 178.25, "trend": 62.34 },
+            { "slug": "tsla", "name": "TSLA Stock", "image_url": "https://source.unsplash.com/256x256/?tesla,electric", "teaser_price": 248.50, "trend": 45.2 }
           ]
         }
       ],
       "items": [
         { "slug": "nvda", "name": "NVDA Stock", "image_url": "https://source.unsplash.com/256x256/?nvidia,technology", "teaser_price": 140, "trend": 85 },
-        { "slug": "avgo", "name": "AVGO Stock", "image_url": "https://logo.clearbit.com/broadcom.com", "teaser_price": 178.25, "trend": 62.34 },
-        { "slug": "jpm", "name": "JPM Stock", "image_url": "https://logo.clearbit.com/jpmorgan.com", "teaser_price": 144.23, "trend": 23.5 },
-        { "slug": "lly", "name": "LLY Stock", "image_url": "https://logo.clearbit.com/lilly.com", "teaser_price": 140, "trend": 85.5 },
-        { "slug": "pltr", "name": "PLTR Stock", "image_url": "https://logo.clearbit.com/palantir.com", "teaser_price": 23.45, "trend": -15.2 },
-        { "slug": "tsla", "name": "TSLA Stock", "image_url": "https://logo.clearbit.com/tesla.com", "teaser_price": 248.50, "trend": 45.2 }
+        { "slug": "avgo", "name": "AVGO Stock", "image_url": "https://source.unsplash.com/256x256/?broadcom,tech", "teaser_price": 178.25, "trend": 62.34 },
+        { "slug": "jpm", "name": "JPM Stock", "image_url": "https://source.unsplash.com/256x256/?jpmorgan,finance", "teaser_price": 144.23, "trend": 23.5 },
+        { "slug": "lly", "name": "LLY Stock", "image_url": "https://source.unsplash.com/256x256/?eli-lilly,health", "teaser_price": 140, "trend": 85.5 },
+        { "slug": "pltr", "name": "PLTR Stock", "image_url": "https://source.unsplash.com/256x256/?palantir,data", "teaser_price": 23.45, "trend": -15.2 },
+        { "slug": "tsla", "name": "TSLA Stock", "image_url": "https://source.unsplash.com/256x256/?tesla,electric", "teaser_price": 248.50, "trend": 45.2 }
       ]
     },
     {
@@ -70,19 +70,19 @@
           "label": "U.S. Coins",
           "icon": "🇺🇸",
           "items": [
-            { "slug": "morgan-dollar-1889", "name": "High-Grade Morgan Dollar 1889", "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Morgan_dollar_obverse.jpg/800px-Morgan_dollar_obverse.jpg", "teaser_price": 35, "trend": 5 },
-            { "slug": "double-eagle-1933", "name": "1933 Double Eagle", "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/1933_Double_Eagle_obverse.jpg/800px-1933_Double_Eagle_obverse.jpg", "teaser_price": 20000000, "trend": 15.5 },
-            { "slug": "flowing-hair-dollar", "name": "Flowing Hair Dollar", "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Flowing_Hair_Dollar_obverse.jpg/800px-Flowing_Hair_Dollar_obverse.jpg", "teaser_price": 7500, "trend": 10 }
+            { "slug": "morgan-dollar-1889", "name": "Morgan Dollar 1889", "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Morgan_dollar_obverse.jpg/256px-Morgan_dollar_obverse.jpg", "teaser_price": 35, "trend": 5 },
+            { "slug": "double-eagle-1933", "name": "Double Eagle 1933", "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/1933_Double_Eagle_obverse.jpg/256px-1933_Double_Eagle_obverse.jpg", "teaser_price": 20000000, "trend": 15.5 },
+            { "slug": "flowing-hair-dollar", "name": "Flowing Hair Dollar", "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Flowing_Hair_Dollar_obverse.jpg/256px-Flowing_Hair_Dollar_obverse.jpg", "teaser_price": 7500, "trend": 10 }
           ]
         }
       ],
       "items": [
-        { "slug": "morgan-dollar-1889", "name": "High-Grade Morgan Dollar 1889", "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Morgan_dollar_obverse.jpg/800px-Morgan_dollar_obverse.jpg", "teaser_price": 35, "trend": 5 },
-        { "slug": "double-eagle-1933", "name": "1933 Double Eagle", "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/1933_Double_Eagle_obverse.jpg/800px-1933_Double_Eagle_obverse.jpg", "teaser_price": 20000000, "trend": 15.5 },
-        { "slug": "flowing-hair-dollar", "name": "Flowing Hair Dollar", "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Flowing_Hair_Dollar_obverse.jpg/800px-Flowing_Hair_Dollar_obverse.jpg", "teaser_price": 7500, "trend": 10 },
-        { "slug": "brazilian-gold-reais", "name": "Brazilian Gold Reais", "image_url": "https://images.unsplash.com/photo-1567038342950-361a2a123b14?w=400", "teaser_price": 1850, "trend": 12.5 },
-        { "slug": "saint-gaudens-double-eagle", "name": "Saint-Gaudens Double Eagle", "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Saint-Gaudens_double_eagle_obverse.jpg/800px-Saint-Gaudens_double_eagle_obverse.jpg", "teaser_price": 2200, "trend": 10.5 },
-        { "slug": "liberty-head-nickel", "name": "Liberty Head Nickel 1913", "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/1913_Liberty_Head_Nickel_obverse.jpg/800px-1913_Liberty_Head_Nickel_obverse.jpg", "teaser_price": 25, "trend": 5 }
+        { "slug": "morgan-dollar-1889", "name": "Morgan Dollar 1889", "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Morgan_dollar_obverse.jpg/256px-Morgan_dollar_obverse.jpg", "teaser_price": 35, "trend": 5 },
+        { "slug": "double-eagle-1933", "name": "Double Eagle 1933", "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/1933_Double_Eagle_obverse.jpg/256px-1933_Double_Eagle_obverse.jpg", "teaser_price": 20000000, "trend": 15.5 },
+        { "slug": "flowing-hair-dollar", "name": "Flowing Hair Dollar", "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Flowing_Hair_Dollar_obverse.jpg/256px-Flowing_Hair_Dollar_obverse.jpg", "teaser_price": 7500, "trend": 10 },
+        { "slug": "brazilian-gold-reais", "name": "Brazilian Gold Reais", "image_url": "https://source.unsplash.com/256x256/?coin,gold", "teaser_price": 1850, "trend": 12.5 },
+        { "slug": "saint-gaudens-double-eagle", "name": "Saint-Gaudens Double Eagle", "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Saint-Gaudens_double_eagle_obverse.jpg/256px-Saint-Gaudens_double_eagle_obverse.jpg", "teaser_price": 2200, "trend": 10.5 },
+        { "slug": "liberty-head-nickel", "name": "Liberty Head Nickel 1913", "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/1913_Liberty_Head_Nickel_obverse.jpg/256px-1913_Liberty_Head_Nickel_obverse.jpg", "teaser_price": 25, "trend": 5 }
       ]
     },
     {
@@ -95,19 +95,19 @@
           "label": "Vintage",
           "icon": "🏆",
           "items": [
-            { "slug": "honus-wagner-t206", "name": "Honus Wagner T206", "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Honus_Wagner_baseball_card.jpg/800px-Honus_Wagner_baseball_card.jpg", "teaser_price": 7800000, "trend": 15.5 },
-            { "slug": "mickey-mantle-1952", "name": "Mickey Mantle 1952 Topps", "image_url": "https://images.unsplash.com/photo-1608043152266-74b58dd3c5f3?w=400", "teaser_price": 125000, "trend": 15.5 },
-            { "slug": "babe-ruth-1914", "name": "Babe Ruth 1914 Baltimore News", "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Babe_Ruth_1914_card.jpg/800px-Babe_Ruth_1914_card.jpg", "teaser_price": 6000000, "trend": 20 }
+            { "slug": "honus-wagner-t206", "name": "Honus Wagner T206", "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Honus_Wagner_baseball_card.jpg/256px-Honus_Wagner_baseball_card.jpg", "teaser_price": 7800000, "trend": 15.5 },
+            { "slug": "mickey-mantle-1952", "name": "Mickey Mantle 1952 Topps", "image_url": "https://source.unsplash.com/256x256/?baseball,card", "teaser_price": 125000, "trend": 15.5 },
+            { "slug": "babe-ruth-1914", "name": "Babe Ruth 1914 Baltimore News", "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Babe_Ruth_1914_card.jpg/256px-Babe_Ruth_1914_card.jpg", "teaser_price": 6000000, "trend": 20 }
           ]
         }
       ],
       "items": [
-        { "slug": "honus-wagner-t206", "name": "Honus Wagner T206", "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Honus_Wagner_baseball_card.jpg/800px-Honus_Wagner_baseball_card.jpg", "teaser_price": 7800000, "trend": 15.5 },
-        { "slug": "mickey-mantle-1952", "name": "Mickey Mantle 1952 Topps", "image_url": "https://images.unsplash.com/photo-1608043152266-74b58dd3c5f3?w=400", "teaser_price": 125000, "trend": 15.5 },
-        { "slug": "babe-ruth-1914", "name": "Babe Ruth 1914 Baltimore News", "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Babe_Ruth_1914_card.jpg/800px-Babe_Ruth_1914_card.jpg", "teaser_price": 6000000, "trend": 20 },
-        { "slug": "jackie-robinson-1949", "name": "Jackie Robinson 1949 Leaf", "image_url": "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400", "teaser_price": 2500, "trend": 12.5 },
-        { "slug": "wilt-chamberlain-1961", "name": "Wilt Chamberlain 1961 Fleer", "image_url": "https://images.unsplash.com/photo-1620712943543-4e2ecfc5d0f9?w=400", "teaser_price": 50000, "trend": 25 },
-        { "slug": "lebron-james-2003", "name": "LeBron James 2003 Upper Deck", "image_url": "https://images.unsplash.com/photo-1547658719-da2b50269166?w=400", "teaser_price": 1500, "trend": 25 }
+        { "slug": "honus-wagner-t206", "name": "Honus Wagner T6", "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Honus_Wagner_baseball_card.jpg/256px-Honus_Wagner_baseball_card.jpg", "teaser_price": 7800000, "trend": 15.5 },
+        { "slug": "mickey-mantle-1952", "name": "Mickey Mantle 1952 Topps", "image_url": "https://source.unsplash.com/256x256/?baseball,card", "teaser_price": 125000, "trend": 15.5 },
+        { "slug": "babe-ruth-1914", "name": "Babe Ruth 1914 Baltimore News", "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Babe_Ruth_1914_card.jpg/256px-Babe_Ruth_1914_card.jpg", "teaser_price": 6000000, "trend": 20 },
+        { "slug": "jackie-robinson-1949", "name": "Jackie Robinson 1949 Leaf", "image_url": "https://source.unsplash.com/256x256/?baseball,legend", "teaser_price": 2500, "trend": 12.5 },
+        { "slug": "wilt-chamberlain-1961", "name": "Wilt Chamberlain 1961 Fleer", "image_url": "https://source.unsplash.com/256x256/?basketball,card", "teaser_price": 50000, "trend": 25 },
+        { "slug": "lebron-james-2003", "name": "LeBron James 2003 Upper Deck", "image_url": "https://source.unsplash.com/256x256/?lebron,basketball", "teaser_price": 1500, "trend": 25 }
       ]
     },
     {
@@ -120,19 +120,19 @@
           "label": "Superheroes",
           "icon": "🦸",
           "items": [
-            { "slug": "action-comics-1", "name": "Action Comics #1", "image_url": "https://upload.wikimedia.org/wikipedia/en/thumb/8/8b/Action_Comics_1.jpg/800px-Action_Comics_1.jpg", "teaser_price": 6000000, "trend": 18.2 },
-            { "slug": "detective-comics-27", "name": "Detective Comics #27", "image_url": "https://images.unsplash.com/photo-1581236000613-9e0d7f1e0f2a?w=400", "teaser_price": 1200000, "trend": 14.5 },
-            { "slug": "amazing-fantasy-15", "name": "Amazing Fantasy #15", "image_url": "https://upload.wikimedia.org/wikipedia/en/thumb/2/2a/Amazing_Fantasy_15.jpg/800px-Amazing_Fantasy_15.jpg", "teaser_price": 150000, "trend": 12.8 }
+            { "slug": "action-comics-1", "name": "Action Comics #1", "image_url": "https://upload.wikimedia.org/wikipedia/en/thumb/8/8b/Action_Comics_1.jpg/256px-Action_Comics_1.jpg", "teaser_price": 6000000, "trend": 18.2 },
+            { "slug": "detective-comics-27", "name": "Detective Comics #27", "image_url": "https://source.unsplash.com/256x256/?batman,comic", "teaser_price": 1200000, "trend": 14.5 },
+            { "slug": "amazing-fantasy-15", "name": "Amazing Fantasy #15", "image_url": "https://upload.wikimedia.org/wikipedia/en/thumb/2/2a/Amazing_Fantasy_15.jpg/256px-Amazing_Fantasy_15.jpg", "teaser_price": 150000, "trend": 12.8 }
           ]
         }
       ],
       "items": [
-        { "slug": "action-comics-1", "name": "Action Comics #1", "image_url": "https://upload.wikimedia.org/wikipedia/en/thumb/8/8b/Action_Comics_1.jpg/800px-Action_Comics_1.jpg", "teaser_price": 6000000, "trend": 18.2 },
-        { "slug": "detective-comics-27", "name": "Detective Comics #27", "image_url": "https://upload.wikimedia.org/wikipedia/en/thumb/7/7d/Detective_Comics_27.jpg/800px-Detective_Comics_27.jpg", "teaser_price": 1200000, "trend": 14.5 },
-        { "slug": "amazing-fantasy-15", "name": "Amazing Fantasy #15", "image_url": "https://upload.wikimedia.org/wikipedia/en/thumb/2/2a/Amazing_Fantasy_15.jpg/800px-Amazing_Fantasy_15.jpg", "teaser_price": 150000, "trend": 12.8 },
-        { "slug": "x-men-1", "name": "X-Men #1", "image_url": "https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=400", "teaser_price": 85000, "trend": 16.3 },
-        { "slug": "fantastic-four-1", "name": "Fantastic Four #1", "image_url": "https://upload.wikimedia.org/wikipedia/en/thumb/5/5f/Fantastic_Four_1.jpg/800px-Fantastic_Four_1.jpg", "teaser_price": 450000, "trend": 13.7 },
-        { "slug": "incredible-hulk-181", "name": "Incredible Hulk #181", "image_url": "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400", "teaser_price": 75000, "trend": 11.2 }
+        { "slug": "action-comics-1", "name": "Action Comics #1", "image_url": "https://upload.wikimedia.org/wikipedia/en/thumb/8/8b/Action_Comics_1.jpg/256px-Action_Comics_1.jpg", "teaser_price": 6000000, "trend": 18.2 },
+        { "slug": "detective-comics-27", "name": "Detective Comics #27", "image_url": "https://source.unsplash.com/256x256/?batman,comic", "teaser_price": 1200000, "trend": 14.5 },
+        { "slug": "amazing-fantasy-15", "name": "Amazing Fantasy #15", "image_url": "https://upload.wikimedia.org/wikipedia/en/thumb/2/2a/Amazing_Fantasy_15.jpg/256px-Amazing_Fantasy_15.jpg", "teaser_price": 150000, "trend": 12.8 },
+        { "slug": "x-men-1", "name": "X-Men #1", "image_url": "https://source.unsplash.com/256x256/?xmen,comic", "teaser_price": 85000, "trend": 16.3 },
+        { "slug": "fantastic-four-1", "name": "Fantastic Four #1", "image_url": "https://upload.wikimedia.org/wikipedia/en/thumb/5/5f/Fantastic_Four_1.jpg/256px-Fantastic_Four_1.jpg", "teaser_price": 450000, "trend": 13.7 },
+        { "slug": "incredible-hulk-181", "name": "Incredible Hulk #181", "image_url": "https://source.unsplash.com/256x256/?hulk,comic", "teaser_price": 75000, "trend": 11.2 }
       ]
     },
     {
@@ -145,19 +145,19 @@
           "label": "Top Rates",
           "icon": "⭐",
           "items": [
-            { "slug": "sofi-high-yield", "name": "SoFi High-Yield Savings", "image_url": "https://logo.clearbit.com/sofi.com", "teaser_price": 10000, "trend": 5.3 },
-            { "slug": "marcus-goldman", "name": "Marcus by Goldman Sachs", "image_url": "https://logo.clearbit.com/goldmansachs.com", "teaser_price": 10000, "trend": 5.2 },
-            { "slug": "ally-high-yield", "name": "Ally High-Yield Savings", "image_url": "https://logo.clearbit.com/ally.com", "teaser_price": 10000, "trend": 5 }
+            { "slug": "sofi-high-yield", "name": "SoFi High-Yield", "image_url": "https://source.unsplash.com/256x256/?sofi,bank", "teaser_price": 10000, "trend": 5.3 },
+            { "slug": "marcus-goldman", "name": "Marcus by Goldman", "image_url": "https://source.unsplash.com/256x256/?goldman,sachs", "teaser_price": 10000, "trend": 5.2 },
+            { "slug": "ally-high-yield", "name": "Ally High-Yield", "image_url": "https://source.unsplash.com/256x256/?ally,bank", "teaser_price": 10000, "trend": 5 }
           ]
         }
       ],
       "items": [
-        { "slug": "high-yield-account-ally", "name": "Ally High-Yield Savings", "image_url": "https://logo.clearbit.com/ally.com", "teaser_price": 10000, "trend": 5 },
-        { "slug": "capital-one-360", "name": "Capital One 360 Performance", "image_url": "https://logo.clearbit.com/capitalone.com", "teaser_price": 4.3, "trend": 0.25 },
-        { "slug": "discover-online", "name": "Discover Online Savings", "image_url": "https://logo.clearbit.com/discover.com", "teaser_price": 10000, "trend": 5.1 },
-        { "slug": "marcus-goldman", "name": "Marcus by Goldman Sachs", "image_url": "https://logo.clearbit.com/goldmansachs.com", "teaser_price": 10000, "trend": 5.2 },
-        { "slug": "citi-accelerate", "name": "Citi Accelerate Savings", "image_url": "https://logo.clearbit.com/citi.com", "teaser_price": 10000, "trend": 4.8 },
-        { "slug": "sofi-high-yield", "name": "SoFi High-Yield Savings", "image_url": "https://logo.clearbit.com/sofi.com", "teaser_price": 10000, "trend": 5.3 }
+        { "slug": "high-yield-account-ally", "name": "Ally High-Yield Savings", "image_url": "https://source.unsplash.com/256x256/?ally,bank", "teaser_price": 10000, "trend": 5 },
+        { "slug": "capital-one-360", "name": "Capital One 360 Performance", "image_url": "https://source.unsplash.com/256x256/?capital,one", "teaser_price": 4.3, "trend": 0.25 },
+        { "slug": "discover-online", "name": "Discover Online Savings", "image_url": "https://source.unsplash.com/256x256/?discover,bank", "teaser_price": 10000, "trend": 5.1 },
+        { "slug": "marcus-goldman", "name": "Marcus by Goldman Sachs", "image_url": "https://source.unsplash.com/256x256/?goldman,sachs", "teaser_price": 10000, "trend": 5.2 },
+        { "slug": "citi-accelerate", "name": "Citi Accelerate Savings", "image_url": "https://source.unsplash.com/256x256/?citi,bank", "teaser_price": 10000, "trend": 4.8 },
+        { "slug": "sofi-high-yield", "name": "SoFi High-Yield Savings", "image_url": "https://source.unsplash.com/256x256/?sofi,bank", "teaser_price": 10000, "trend": 5.3 }
       ]
     },
     {
@@ -165,12 +165,12 @@
       "label": "Private Equity",
       "icon": "🏢",
       "items": [
-        { "slug": "private-markets-fund", "name": "Global Private Markets Fund", "image_url": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=400", "teaser_price": 250, "trend": 12.5 },
-        { "slug": "venture-growth-fund", "name": "Venture Growth Fund", "image_url": "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=400", "teaser_price": 50000, "trend": 18.2 },
-        { "slug": "buyout-fund-large-cap", "name": "Large-Cap Buyout Fund", "image_url": "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400", "teaser_price": 2500000000, "trend": 12.5 },
-        { "slug": "distressed-debt-fund", "name": "Distressed Debt Fund", "image_url": "https://images.unsplash.com/photo-1554224154-22e7a3d3bb99?w=400", "teaser_price": 75000, "trend": 15.4 },
-        { "slug": "secondaries-fund", "name": "Private Equity Secondaries", "image_url": "https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=400", "teaser_price": 1000000, "trend": 12.5 },
-        { "slug": "impact-investing-pe", "name": "Impact Private Equity", "image_url": "https://images.unsplash.com/photo-1551650975-87deedd944c3?w=400", "teaser_price": 80000, "trend": 20.6 }
+        { "slug": "private-markets-fund", "name": "Global Private Markets Fund", "image_url": "https://source.unsplash.com/256x256/?private,equity", "teaser_price": 250, "trend": 12.5 },
+        { "slug": "venture-growth-fund", "name": "Venture Growth Fund", "image_url": "https://source.unsplash.com/256x256/?venture,capital", "teaser_price": 50000, "trend": 18.2 },
+        { "slug": "buyout-fund-large-cap", "name": "Large-Cap Buyout Fund", "image_url": "https://source.unsplash.com/256x256/?buyout,fund", "teaser_price": 2500000000, "trend": 12.5 },
+        { "slug": "distressed-debt-fund", "name": "Distressed Debt Fund", "image_url": "https://source.unsplash/256x256/?debt,fund", "teaser_price": 75000, "trend": 15.4 },
+        { "slug": "secondaries-fund", "name": "Private Equity Secondaries", "image_url": "https://source.unsplash.com/256x256/?secondaries,market", "teaser_price": 1000000, "trend": 12.5 },
+        { "slug": "impact-investing-pe", "name": "Impact Private Equity", "image_url": "https://source.unsplash.com/256x256/?impact,investing", "teaser_price": 80000, "trend": 20.6 }
       ]
     },
     {
@@ -178,25 +178,37 @@
       "label": "Equities",
       "icon": "📈",
       "items": [
-        { "slug": "global-stocks-index", "name": "MSCI World Equities Index", "image_url": "https://images.unsplash.com/photo-1620712943543-4e2ecfc5d0f9?w=400", "teaser_price": 3250.75, "trend": 12.5 },
-        { "slug": "s-p-500-etf", "name": "S&P 500 ETF (SPY)", "image_url": "https://logo.clearbit.com/spglobal.com", "teaser_price": 573.25, "trend": 22.5 },
-        { "slug": "nasdaq-100", "name": "Nasdaq 100 ETF (QQQ)", "image_url": "https://logo.clearbit.com/nasdaq.com", "teaser_price": 20450.27, "trend": 25.3 },
-        { "slug": "emerging-markets-equities", "name": "Emerging Markets Equities", "image_url": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=400", "teaser_price": 120.5, "trend": 8.75 },
-        { "slug": "small-cap-equities", "name": "Russell 2000 Small-Cap", "image_url": "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=400", "teaser_price": 120.5, "trend": 8.75 },
-        { "slug": "dividend-aristocrats", "name": "Dividend Aristocrats ETF", "image_url": "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400", "teaser_price": 4000, "trend": 9.8 }
+        { "slug": "global-stocks-index", "name": "MSCI World Equities Index", "image_url": "https://source.unsplash.com/256x256/?equities,global", "teaser_price": 3250.75, "trend": 12.5 },
+        { "slug": "s-p-500-etf", "name": "S&P 500 ETF (SPY)", "image_url": "https://source.unsplash.com/256x256/?sp500,index", "teaser_price": 573.25, "trend": 22.5 },
+        { "slug": "nasdaq-100", "name": "Nasdaq 100 ETF (QQQ)", "image_url": "https://source.unsplash.com/256x256/?nasdaq,index", "teaser_price": 20450.27, "trend": 25.3 },
+        { "slug": "emerging-markets-equities", "name": "Emerging Markets Equities", "image_url": "https://source.unsplash.com/256x256/?emerging,markets", "teaser_price": 120.5, "trend": 8.75 },
+        { "slug": "small-cap-equities", "name": "Russell 2000 Small-Cap", "image_url": "https://source.unsplash.com/256x256/?small,cap", "teaser_price": 120.5, "trend": 8.75 },
+        { "slug": "dividend-aristocrats", "name": "Dividend Aristocrats ETF", "image_url": "https://source.unsplash.com/256x256/?dividend,stocks", "teaser_price": 4000, "trend": 9.8 }
       ]
     },
     {
       "name": "commodities",
       "label": "Commodities",
       "icon": "⛽",
+      "subCategories": [
+        {
+          "name": "metals",
+          "label": "Metals",
+          "icon": "🥇",
+          "items": [
+            { "slug": "gold-futures", "name": "Gold Futures", "image_url": "https://source.unsplash.com/256x256/?gold,bar", "teaser_price": 2685.5, "trend": 22.7 },
+            { "slug": "silver-etf", "name": "Silver ETF (SLV)", "image_url": "https://source.unsplash.com/256x256/?silver,metal", "teaser_price": 31.25, "trend": 12.5 },
+            { "slug": "copper-futures", "name": "Copper Futures", "image_url": "https://source.unsplash.com/256x256/?copper,metal", "teaser_price": 4.25, "trend": -5.3 }
+          ]
+        }
+      ],
       "items": [
-        { "slug": "gold-futures", "name": "Gold Futures Contract", "image_url": "https://images.unsplash.com/photo-1572293577602-4563f4e96644?w=400", "teaser_price": 2685.5, "trend": 22.7 },
-        { "slug": "silver-etf", "name": "Silver ETF (SLV)", "image_url": "https://images.unsplash.com/photo-1544965888-7bcaf9f9b8c0?w=400", "teaser_price": 31.25, "trend": 12.5 },
-        { "slug": "oil-wti-futures", "name": "WTI Oil Futures", "image_url": "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=400", "teaser_price": 71.23, "trend": -5.4 },
-        { "slug": "copper-futures", "name": "Copper Futures", "image_url": "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=400", "teaser_price": 4.25, "trend": -5.3 },
-        { "slug": "agricultural-soybeans", "name": "Soybeans Futures", "image_url": "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=400", "teaser_price": 10.25, "trend": -5.3 },
-        { "slug": "natural-gas-futures", "name": "Natural Gas Futures", "image_url": "https://images.unsplash.com/photo-1558618047-3c8c76ca6e62?w=400", "teaser_price": 2.85, "trend": -12.3 }
+        { "slug": "gold-futures", "name": "Gold Futures Contract", "image_url": "https://source.unsplash.com/256x256/?gold,bar", "teaser_price": 2685.5, "trend": 22.7 },
+        { "slug": "silver-etf", "name": "Silver ETF (SLV)", "image_url": "https://source.unsplash.com/256x256/?silver,metal", "teaser_price": 31.25, "trend": 12.5 },
+        { "slug": "oil-wti-futures", "name": "WTI Oil Futures", "image_url": "https://source.unsplash.com/256x256/?oil,barrel", "teaser_price": 71.23, "trend": -5.4 },
+        { "slug": "copper-futures", "name": "Copper Futures", "image_url": "https://source.unsplash.com/256x256/?copper,metal", "teaser_price": 4.25, "trend": -5.3 },
+        { "slug": "agricultural-soybeans", "name": "Soybeans Futures", "image_url": "https://source.unsplash.com/256x256/?soybeans,farm", "teaser_price": 10.25, "trend": -5.3 },
+        { "slug": "natural-gas-futures", "name": "Natural Gas Futures", "image_url": "https://source.unsplash.com/256x256/?natural,gas", "teaser_price": 2.85, "trend": -12.3 }
       ]
     }
   ]
