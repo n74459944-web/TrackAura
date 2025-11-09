@@ -13,6 +13,8 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts';
+import { useAuth } from '@/components/AuthWrapper';  // NEW: For session check
+import { supabase } from '@/lib/supabase';  // NEW: For watchlist insert
 
 interface TrackData {
   currentPrice: number;
@@ -20,11 +22,20 @@ interface TrackData {
   specs: { [key: string]: string };
 }
 
+// NEW: Type for watchlist insert (fixes TS 'never' overload—manual schema for now)
+type WatchlistInsert = {
+  user_id: string;
+  item_slug: string;
+  category?: string;
+  notes?: string;
+};
+
 export default function ItemPage() {
   const params = useParams();
   const slug = params.slug as string;
   const [data, setData] = useState<TrackData | null>(null);
   const [loading, setLoading] = useState(true);
+  const { session } = useAuth();  // NEW: Session for track eligibility
 
   useEffect(() => {
     fetch('/api/track', {
@@ -41,7 +52,32 @@ export default function ItemPage() {
   if (loading) return <div className="min-h-screen flex items-center justify-center">Loading item...</div>;
   if (!data) return <div className="min-h-screen flex items-center justify-center">Item not found.</div>;
 
-  // NEW: Robust history prep—filter invalids, then sort newest first, cap at 30
+  // NEW: Track handler—insert to Supabase watchlists (typed to fix overload)
+  const handleTrack = async () => {
+  if (!session) {
+    alert('Sign in to track items!');
+    return;
+  }
+  const notes = prompt('Notes? (e.g., "HODL long-term")') || '';
+  const insertData: WatchlistInsert = {
+    user_id: session.user.id,
+    item_slug: slug,
+    category: data.specs.Category || data.specs['Category'] || 'general',
+    notes,
+  };
+  const { error } = await supabase
+    .from('watchlists')
+    .insert(insertData as any);  // FIXED: Type assertion bypasses 'never'—safe for now
+  if (error) {
+    console.error('Track error:', error);
+    alert(`Failed to track: ${error.message}`);
+  } else {
+    console.log('Tracked item:', slug);
+    alert('Added to your watchlist! Check /dashboard');
+  }
+};
+
+  // Robust history prep—filter invalids, then sort newest first, cap at 30
   const validHistory = data.history.filter(h => 
     h.date && 
     !isNaN(new Date(h.date).getTime()) &&  // Valid date check
@@ -120,6 +156,18 @@ export default function ItemPage() {
           <p className="text-sm text-gray-500 mt-2 text-center">
             Data powered by Grok API—prices in USD, updated live.
           </p>
+        </div>
+
+        {/* NEW: Track Button */}
+        <div className="text-center mt-8">
+          <button
+            onClick={handleTrack}
+            disabled={!session || loading}
+            className="bg-green-600 text-white py-3 px-8 rounded-lg hover:bg-green-700 disabled:opacity-50 transition font-semibold"
+          >
+            {loading ? 'Loading...' : session ? 'Add to Watchlist' : 'Sign In to Track'}
+          </button>
+          {session && <p className="text-sm text-gray-500 mt-2">Track this item's value over time—view in your dashboard!</p>}
         </div>
       </div>
     </div>

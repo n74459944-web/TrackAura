@@ -3,14 +3,15 @@
 
 import { useState } from 'react';
 import { supabase } from '@/lib/supabase';
-import { useAuth } from '@/components/AuthWrapper';  // NEW: From wrapper
+import { useAuth } from '@/components/AuthWrapper';
 import Link from 'next/link';
 
 export default function Auth() {
-  const { session, loading } = useAuth();  // FIXED: Typed, works post-wrapper
+  const { session, loading } = useAuth();
   const [showModal, setShowModal] = useState(false);
   const [email, setEmail] = useState('');
   const [loadingAuth, setLoadingAuth] = useState(false);
+  const [signingOut, setSigningOut] = useState(false);  // NEW: For sign-out feedback
   const [isSignUp, setIsSignUp] = useState(false);
 
   const handleMagicLink = async () => {
@@ -24,9 +25,16 @@ export default function Auth() {
       alert(`Oops: ${error.message}`);
     } else {
       alert(isSignUp ? 'Check your email to create your TrackAura account!' : 'Check your email to sign in and start tracking!');
-      setShowModal(false);  // Close modal on success
+      setShowModal(false);
     }
     setLoadingAuth(false);
+  };
+
+  const handleSignOut = async () => {
+    setSigningOut(true);
+    await supabase.auth.signOut();
+    window.location.reload();
+    setSigningOut(false);
   };
 
   const closeModal = () => setShowModal(false);
@@ -44,13 +52,21 @@ export default function Auth() {
           My Watchlist
         </Link>
         <button
-          onClick={async () => {
-            await supabase.auth.signOut();
-            window.location.reload();
-          }}
-          className="text-red-600 underline text-sm hover:text-red-800"
+          onClick={handleSignOut}
+          disabled={signingOut}
+          className="text-red-600 underline text-sm hover:text-red-800 disabled:opacity-50 flex items-center space-x-1"
         >
-          Sign Out
+          {signingOut ? (
+            <>
+              <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+              </svg>
+              Signing out...
+            </>
+          ) : (
+            'Sign Out'
+          )}
         </button>
       </div>
     );
