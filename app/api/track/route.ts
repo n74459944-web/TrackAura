@@ -19,20 +19,26 @@ export async function POST(request: NextRequest) {
 
     // Category teasers handler (e.g., 'top-6-crypto') – JSON + Mock Sync (no API for speed)
     if (item.startsWith('top-6-')) {
-      const teaserCategory = item.slice(6).toLowerCase();
-      let staticData;
-      try {
-        const staticDataRes = await fetch(
-          `${request.headers.get('x-forwarded-proto') || 'http'}://${request.headers.get('host') || 'localhost:3000'}/data/categories.json`
-        );
-        staticData = await staticDataRes.json();
-      } catch (err) {
-        console.error('JSON load error:', err);
-        return NextResponse.json({ error: 'Category data unavailable' }, { status: 500 });
-      }
+  const teaserCategory = item.slice(6).toLowerCase();
+  let staticData;
+  try {
+    const staticDataRes = await fetch(
+      `${request.headers.get('x-forwarded-proto') || 'http'}://${request.headers.get('host') || 'localhost:3000'}/data/categories.json`
+    );
+    if (!staticDataRes.ok) {
+      console.error('JSON fetch failed:', staticDataRes.status, staticDataRes.statusText);  // NEW: Log fetch errors
+      return NextResponse.json({ error: 'Category data unavailable—check /data/categories.json' }, { status: 500 });
+    }
+    staticData = await staticDataRes.json();
+  } catch (err) {
+    console.error('JSON load error:', err);
+    return NextResponse.json({ error: 'Category data unavailable' }, { status: 500 });
+  }
 
-      const categoryData = staticData.categories.find((c: any) => c.name === teaserCategory);
-      let relatedItems: CategoryItem[] = categoryData?.items || [];
+  const categoryData = staticData.categories.find((c: any) => c.name === teaserCategory);
+  console.log('DEBUG: Looking for', teaserCategory, '| Found:', categoryData ? categoryData.name : 'MISSING! Available cats:', staticData.categories.map((c: any) => c.name));  // NEW: Spill all for debug
+
+  let relatedItems: CategoryItem[] = categoryData?.items || [];
 
       // Mock live sync (or optional Grok batch for prices—add if needed)
       // For now, use static trends; Grok for individual items

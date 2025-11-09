@@ -22,11 +22,22 @@ export default function CategoryPage() {
   useEffect(() => {
     setLoading(true);
     setError('');
-    console.log('Fetching for category:', category, 'Sending item:', `top-6-${category}`); // Log request
+
+    // Handle nested paths like "crypto/altcoins"
+    const pathParts = category.split('/');  // e.g., ['crypto', 'altcoins']
+    const mainCat = pathParts[0];
+    const subCat = pathParts[1];
+    const numItems = subCat ? 3 : 6;
+    const fetchSlug = `top-${numItems}-${subCat || mainCat}`;
+    console.log('Fetching for', { mainCat, subCat, fetchSlug });  // Enhanced log
+
     fetch('/api/track', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ item: `top-6-${category}` }),
+      body: JSON.stringify({ 
+        item: fetchSlug, 
+        category: mainCat  // Pass main for API fallback if needed
+      }),
     })
       .then(res => {
         console.log('API Response Status:', res.status); // Log status
@@ -49,6 +60,14 @@ export default function CategoryPage() {
       .finally(() => setLoading(false));
   }, [category]);
 
+  // Nested title logic
+  const pathParts = category.split('/');
+  const mainCat = pathParts[0];
+  const subCat = pathParts[1];
+  const title = subCat 
+    ? `${mainCat.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())} > ${subCat.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}`
+    : category.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+
   if (loading) return <div className="flex justify-center items-center h-64"><p>Loading {category}...</p></div>;
   if (error) return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 py-12 flex justify-center items-center">
@@ -63,7 +82,7 @@ export default function CategoryPage() {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 py-12">
       <div className="max-w-6xl mx-auto px-4">
         <button onClick={() => window.history.back()} className="mb-6 text-blue-600 hover:underline">← Back to Search</button>
-        <h1 className="text-4xl font-bold text-gray-900 capitalize mb-8 text-center">{category.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</h1>
+        <h1 className="text-4xl font-bold text-gray-900 capitalize mb-8 text-center">{title}</h1>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {items.map((item) => (
             <Link key={item.slug} href={`/item/${item.slug}`} className="bg-white rounded-2xl shadow-md hover:shadow-xl transition overflow-hidden">
