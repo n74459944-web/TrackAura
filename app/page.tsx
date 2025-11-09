@@ -1,15 +1,17 @@
 'use client';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
-import { Search, TrendingUp, ChevronDown, Menu, X } from 'lucide-react';
+import { Search, TrendingUp, ChevronDown, Menu } from 'lucide-react';
 import Auth from '@/components/Auth';
+import { supabase } from '@/lib/supabase';  // Shared client
 
 interface Category {
+  id: string;
   name: string;
   label: string;
   icon: string;
-  subCategories?: { name: string; label: string; icon: string; items?: any[] }[];
-  items?: any[];
+  slug: string;  // FIXED: Explicit for TS
+  children?: Category[];  // Recursive for nesting
 }
 
 export default function HomePage() {
@@ -17,12 +19,25 @@ export default function HomePage() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [expandedCats, setExpandedCats] = useState<Set<string>>(new Set());
   const [showSidebar, setShowSidebar] = useState(false);
+  const [loadingCats, setLoadingCats] = useState(true);
 
+  // FIXED: Dynamic fetch with .is(null) + explicit slug in children select
   useEffect(() => {
-    fetch('/data/categories.json')
-      .then(res => res.json())
-      .then(data => setCategories(data.categories))
-      .catch(() => setCategories([]));
+    async function fetchCategories() {
+      const { data, error } = await supabase
+        .from('categories')
+        .select('id, name, label, icon, slug, *, children:categories(id, name, label, icon, slug, *)')  // FIXED: Recursive + slug
+        .is('parent_id', null)  // FIXED: .is() for null checks
+        .order('name');
+      if (error) {
+        console.error('Category fetch error:', error);
+        setCategories([]);  // Fallback to empty
+      } else {
+        setCategories(data || []);
+      }
+      setLoadingCats(false);
+    }
+    fetchCategories();
   }, []);
 
   useEffect(() => {
@@ -41,14 +56,14 @@ export default function HomePage() {
     }
   };
 
-  const toggleSubCat = (catName: string, e: React.MouseEvent) => {
+  const toggleSubCat = (catId: string, e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     const newExpanded = new Set(expandedCats);
-    if (newExpanded.has(catName)) {
-      newExpanded.delete(catName);
+    if (newExpanded.has(catId)) {
+      newExpanded.delete(catId);
     } else {
-      newExpanded.add(catName);
+      newExpanded.add(catId);
     }
     setExpandedCats(newExpanded);
   };
@@ -62,8 +77,16 @@ export default function HomePage() {
     closeSidebar();
   };
 
-  // Quick teasers: Pull one popular item from first 3 categories
-  const quickTeasers = categories.slice(0, 3).flatMap(cat => cat.items?.slice(0, 1) || []);
+  if (loadingCats) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
+        <div className="text-center">
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">TrackAura</h1>
+          <p className="text-gray-600">Loading categories...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
@@ -75,66 +98,49 @@ export default function HomePage() {
         <Menu className="w-6 h-6 text-gray-700" />
       </button>
 
-      {/* Mobile Close Button Overlay */}
-      {showSidebar && (
-        <button
-          onClick={closeSidebar}
-          className="fixed top-4 right-4 lg:hidden z-50 bg-white p-2 rounded-lg shadow-md"
-        >
-          <X className="w-6 h-6 text-gray-700" />
-        </button>
-      )}
-
       <div className="max-w-7xl mx-auto px-2 lg:px-4 py-12 grid grid-cols-1 lg:grid-cols-4 gap-8">
         
-        {/* Left Sidebar */}
+        {/* Left Sidebar (Dynamic from Supabase) */}
         <aside 
           className={`lg:col-span-1 bg-white rounded-xl shadow-md p-6 h-fit sticky top-12 transition-all duration-300 ease-in-out overflow-y-auto max-h-screen z-50 ${
             showSidebar ? 'fixed inset-y-0 left-0 w-64 transform translate-x-0 shadow-2xl' : '-translate-x-full lg:translate-x-0'
           }`}
           style={{ pointerEvents: 'auto' }}
         >
-          <div className="flex justify-between items-center mb-4 lg:mb-2">
-            <h2 className="text-xl font-bold text-gray-900">Categories</h2>
-            {showSidebar && (
-              <button onClick={closeSidebar} className="lg:hidden">
-                <X className="w-5 h-5 text-gray-500" />
-              </button>
-            )}
-          </div>
+          <h2 className="text-xl font-bold mb-2 text-gray-900 text-center">Categories ({categories.length})</h2>
           <nav className="space-y-2" style={{ pointerEvents: 'auto' }}>
             {categories.map((cat) => (
-              <div key={cat.name} className="border-b border-gray-200 pb-2 last:border-b-0">
+              <div key={cat.id} className="border-b border-gray-200 pb-2 last:border-b-0">
                 <div className="flex justify-between items-center">
                   <button
-                    onClick={(e) => handleLinkClick(e, `/categories/${cat.name}`)}
+                    onClick={(e) => handleLinkClick(e, `/categories/${cat.slug}`)}
                     className="flex items-center flex-1 p-2 hover:bg-gray-50 rounded text-left"
                     style={{ pointerEvents: 'auto' }}
                   >
                     <span className="text-xl mr-2">{cat.icon}</span>
                     <span className="font-medium">{cat.label}</span>
                   </button>
-                  {cat.subCategories && (
+                  {cat.children && cat.children.length > 0 && (
                     <button
-                      onClick={(e) => toggleSubCat(cat.name, e)}
+                      onClick={(e) => toggleSubCat(cat.id, e)}
                       className="p-2 hover:bg-gray-50 rounded"
                     >
-                      <ChevronDown className={`w-4 h-4 transition-transform ${expandedCats.has(cat.name) ? 'rotate-180' : ''}`} />
+                      <ChevronDown className={`w-4 h-4 transition-transform ${expandedCats.has(cat.id) ? 'rotate-180' : ''}`} />
                     </button>
                   )}
                 </div>
-                {cat.subCategories && expandedCats.has(cat.name) && (
-                  <ul className={`ml-6 mt-2 space-y-1 text-sm transition-all duration-300 overflow-hidden max-h-96 opacity-100`}>
-                    {cat.subCategories.map((sub) => (
-                      <li key={sub.name}>
-                        <Link
-                          href={`/categories/${cat.name}/${sub.name}`}
-                          className="flex items-center text-blue-600 hover:text-blue-800 p-1 rounded w-full text-left transition-colors"
-                          onClick={closeSidebar}
+                {cat.children && expandedCats.has(cat.id) && (
+                  <ul className="ml-6 mt-2 space-y-1 text-sm transition-all duration-300 overflow-hidden max-h-96 opacity-100">
+                    {cat.children.map((sub) => (
+                      <li key={sub.id}>
+                        <button
+                          onClick={(e) => handleLinkClick(e, `/categories/${cat.slug}/${sub.slug}`)}
+                          className="flex items-center text-blue-600 hover:text-blue-800 p-1 rounded w-full text-left"
+                          style={{ pointerEvents: 'auto' }}
                         >
                           <span className="text-xs mr-2">{sub.icon}</span>
                           <span className="font-medium">{sub.label}</span>
-                        </Link>
+                        </button>
                       </li>
                     ))}
                   </ul>
@@ -142,6 +148,9 @@ export default function HomePage() {
               </div>
             ))}
           </nav>
+          {categories.length === 0 && (
+            <p className="text-center text-gray-500 mt-4">No categories yet—run npm run seed!</p>
+          )}
         </aside>
 
         {/* Main Content */}
@@ -175,47 +184,14 @@ export default function HomePage() {
             </form>
           </div>
 
-          {/* Quick Item Teasers */}
-          <div className="mb-12">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">Quick Tracks</h2>
-            <div className="grid md:grid-cols-3 gap-6">
-              {quickTeasers.map((item) => (
-                <Link key={item.slug} href={`/item/${item.slug}`} className="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition group">
-                  <img 
-                    src={item.image_url} 
-                    alt={item.name} 
-                    className="w-full h-32 object-cover rounded-lg mb-4 group-hover:scale-105 transition-transform"
-                    onError={(e) => e.currentTarget.src = `https://via.placeholder.com/256x128?text=${item.name.substring(0, 10)}`}
-                  />
-                  <h3 className="font-semibold mb-2 capitalize">{item.name}</h3>
-                  <p className="text-2xl font-bold text-gray-900">${item.teaser_price.toLocaleString()}</p>
-                  <div className={`flex items-center mt-2 text-sm ${
-                    item.trend >= 0 ? 'text-green-600' : 'text-red-600'
-                  }`}>
-                    <TrendingUp className={`w-4 h-4 ${item.trend < 0 ? 'rotate-180' : ''}`} />
-                    <span>{item.trend >= 0 ? '+' : ''}{item.trend.toFixed(1)}% (1Y)</span>
-                  </div>
-                </Link>
-              ))}
-              {quickTeasers.length < 3 && (
-                <div className="bg-white rounded-xl p-6 shadow-md text-center text-gray-500">
-                  <p>More categories loading...</p>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Category Highlights */}
-          <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">Explore Categories</h2>
-            <div className="grid md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {categories.slice(0, 8).map((cat) => (
-                <Link key={cat.name} href={`/categories/${cat.name}`} className="bg-white rounded-xl p-4 shadow-md hover:shadow-lg transition text-center">
-                  <span className="text-3xl mb-2 block">{cat.icon}</span>
-                  <h3 className="font-semibold">{cat.label}</h3>
-                </Link>
-              ))}
-            </div>
+          {/* Quick Item Teasers (Static for now—dynamize later from Supabase top-trends) */}
+          <div className="grid md:grid-cols-3 gap-6 mb-12">
+            {['bitcoin', 'rolex-submariner', 'nike-air-jordan-1'].map((slug) => (
+              <Link key={slug} href={`/item/${slug}`} className="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition">
+                <h3 className="font-semibold mb-2 capitalize">{slug.replace(/-/g, ' ')}</h3>
+                <p className="text-gray-600">Track value over time</p>
+              </Link>
+            ))}
           </div>
         </main>
       </div>

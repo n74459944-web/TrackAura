@@ -1,151 +1,135 @@
 // scripts/seed.js
+require('dotenv').config({ path: '.env.local' });
 const { createClient } = require('@supabase/supabase-js');
 const axios = require('axios');
-const csv = require('csv-parser');
 const fs = require('fs');
-const { promisify } = require('util');
-require('dotenv').config();
+const csv = require('csv-parser');
+const path = require('path');
 
-const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY);
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+if (!supabaseUrl || !supabaseServiceKey) {
+  throw new Error('TrackAura Seeder: Missing SUPABASE_SERVICE_ROLE_KEY in .env.local—check Dashboard > Settings > API > service_role');
+}
+
+const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+async function clearTables() {
+  console.log('Clearing existing data...');
+  const { error: itemError } = await supabase.from('items').delete().neq('id', '');
+  if (itemError) console.warn('Items clear warning:', itemError);
+  const { error: catError } = await supabase.from('categories').delete().neq('id', '');
+  if (catError) console.warn('Categories clear warning:', catError);
+}
 
 async function seedCrypto() {
-  console.log('🌟 TrackAura Seeding Crypto Categories & Items...');
+  console.log('Seeding Crypto Categories & Items...');
   
-  // Step 1: Seed top categories (e.g., from CoinGecko /coins/categories)
-  try {
-    const { data: cats } = await axios.get('https://api.coingecko.com/api/v3/coins/categories/list');
-    const topCats = cats.slice(0, 20);  // Limit for quick seed; expand later
-    const inserts = topCats.map(cat => ({
-      name: cat.name,
-      slug: cat.id,
-      label: cat.name,
-      icon: '₿',
-      description: `Crypto category: ${cat.name}`
-    }));
-    const { error: catError } = await supabase.from('categories').insert(inserts).select();
-    if (catError) throw catError;
-    console.log(`✅ Seeded ${topCats.length} crypto categories (e.g., bitcoin, stablecoins)`);
-  } catch (err) {
-    console.error('❌ Crypto cat seed error:', err.message);
-    return;
-  }
+  // FIXED: Insert root 'crypto' category first
+  const rootCrypto = {
+    name: 'Crypto',
+    slug: 'crypto',
+    label: 'Crypto',
+    icon: '₿',
+    description: 'Root category for all cryptocurrencies'
+  };
+  const { error: rootError } = await supabase.from('categories').upsert(rootCrypto, { onConflict: 'slug' });
+  if (rootError) throw rootError;
 
-  // Step 2: Seed items (top 100 markets, link to 'crypto' root cat)
-  try {
-    const { data: items } = await axios.get('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&per_page=100&page=1&sparkline=false');
-    const rootCat = await supabase.from('categories').select('id').eq('slug', 'crypto').single();  // Assume 'crypto' root exists or seed it first
-    if (!rootCat.data) {
-      console.log('⚠️ Creating root crypto category...');
-      const { data: newRoot } = await supabase.from('categories').insert({ name: 'crypto', slug: 'crypto', label: 'Crypto', icon: '₿' }).select().single();
-      rootCatId = newRoot.id;
-    } else {
-      rootCatId = rootCat.data.id;
-    }
+  // Categories (top 20 from CoinGecko—upsert on name/slug, optional parent_id for subs later)
+  const { data: catsRes } = await axios.get('https://api.coingecko.com/api/v3/coins/categories/list');
+  const categories = catsRes.slice(0, 20).map(cat => ({
+    name: cat.name,
+    slug: cat.id,
+    label: cat.name,
+    icon: '₿',
+    description: `Crypto category: ${cat.name}`,
+    // parent_id: rootCrypto.id  // Uncomment to nest under root (add FK if needed)
+  }));
+  const { error: catError } = await supabase
+    .from('categories')
+    .upsert(categories, { onConflict: 'name' });
+  if (catError) throw catError;
 
-    const itemInserts = items.map(item => ({
-      slug: item.id,
-      name: item.name,
-      category_id: rootCatId,
-      teaser_price: item.current_price,
-      trend: item.price_change_percentage_24h || 0,
-      image_url: item.image,
-      description: `${item.name} - Current: $${item.current_price} | 24h: ${item.price_change_percentage_24h?.toFixed(2)}%`
-    }));
-    const { error: itemError } = await supabase.from('items').insert(itemInserts).select();
-    if (itemError) throw itemError;
-    console.log(`✅ Seeded ${items.length} crypto items (e.g., Bitcoin at $${items[0].current_price})`);
-  } catch (err) {
-    console.error('❌ Crypto item seed error:', err.message);
-  }
+  // Items (top 100 markets, link to root 'crypto'—upsert on slug)
+  const { data: itemsRes } = await axios.get('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&per_page=100&page=1');
+  const rootCat = await supabase.from('categories').select('id').eq('slug', 'crypto').single();
+  if (!rootCat.data) throw new Error('Crypto root category not found—seed failed');
+  const items = itemsRes.map(item => ({
+    slug: item.id,
+    name: item.name,
+    category_id: rootCat.data.id,  // FIXED: Links to root
+    teaser_price: item.current_price,
+    trend: item.price_change_percentage_24h || 0,
+    image_url: item.image,
+    description: `${item.name} - Market Cap: $${item.market_cap?.toLocaleString() || 'N/A'}`
+  }));
+  const { error: itemError } = await supabase
+    .from('items')
+    .upsert(items, { onConflict: 'slug' });
+  if (itemError) throw itemError;
+
+  console.log(`Seeded/Updated root + ${categories.length} crypto cats + ${items.length} items!`);
 }
 
 async function seedStocks() {
-  console.log('📈 TrackAura Seeding Stocks Sectors & Items...');
+  console.log('Seeding Stocks Categories & Items...');
   
-  // Step 1: Seed sectors (hardcoded top 5; fetch from Alpha Vantage /SECTOR later)
+  // Categories (sectors—upsert on name)
   const sectors = [
     { name: 'technology', slug: 'technology', label: 'Technology', icon: '💻' },
     { name: 'finance', slug: 'finance', label: 'Finance', icon: '🏦' },
-    { name: 'healthcare', slug: 'healthcare', label: 'Healthcare', icon: '🩺' },
-    { name: 'energy', slug: 'energy', label: 'Energy', icon: '⚡' },
-    { name: 'consumer', slug: 'consumer', label: 'Consumer Goods', icon: '🛒' }
+    { name: 'healthcare', slug: 'healthcare', label: 'Healthcare', icon: '🏥' }
   ];
-  try {
-    const { error: sectorError } = await supabase.from('categories').insert(sectors).select();
-    if (sectorError) throw sectorError;
-    console.log(`✅ Seeded ${sectors.length} stock sectors`);
-  } catch (err) {
-    console.error('❌ Stock sector seed error:', err.message);
+  const { error: catError } = await supabase
+    .from('categories')
+    .upsert(sectors, { onConflict: 'name' });
+  if (catError) throw catError;
+
+  // Symbols (Alpha Vantage—upsert on slug)
+  const apiKey = process.env.ALPHA_VANTAGE_API_KEY;
+  if (!apiKey) {
+    console.warn('No ALPHA_VANTAGE_API_KEY—skipping stocks (crypto seeded). Add to .env.local from alphavantage.co.');
     return;
   }
 
-  // Step 2: Download/parse CSV (Alpha Vantage LISTING_STATUS—~4k symbols)
-  const csvUrl = `https://www.alphavantage.co/query?function=LISTING_STATUS&apikey=${process.env.ALPHA_VANTAGE_KEY || 'demo'}`;
-  let csvData;
-  try {
-    const { data: csvResponse } = await axios.get(csvUrl);
-    csvData = csvResponse;  // Raw CSV text
-    fs.writeFileSync('temp_listing_status.csv', csvData);  // Temp file for streaming
-  } catch (err) {
-    console.error('❌ CSV download error:', err.message);
-    return;
-  }
-
-  // Step 3: Stream/parse rows, collect for async batch
-  const results = [];
-  return new Promise((resolve, reject) => {
-    fs.createReadStream('temp_listing_status.csv')
-      .pipe(csv())
-      .on('data', (row) => {
-        // Filter US stocks only, skip if no name/symbol
-        if (row.name && row.symbol && row['exchange'] === 'NASDAQ' || row['exchange'] === 'NYSE') {
-          results.push(row);
-        }
-      })
-      .on('end', async () => {
-        console.log(`📊 Parsed ${results.length} stock symbols from CSV`);
-        
-        // Batch insert (5 at a time for rate limits; assign to 'technology' as example—randomize sectors in prod)
-        const techCat = await supabase.from('categories').select('id').eq('slug', 'technology').single();
-        if (!techCat.data) {
-          reject(new Error('Tech category not found—seed sectors first'));
-          return;
-        }
-        const techCatId = techCat.data.id;
-
-        const batchSize = 5;
-        for (let i = 0; i < results.length; i += batchSize) {
-          const batch = results.slice(i, i + batchSize).map(row => ({
-            slug: row.symbol,
-            name: row.name,
-            category_id: techCatId,  // TODO: Map to real sector via row['sector']
-            teaser_price: 0,  // Fetch real prices via TIME_SERIES_DAILY in separate cron
-            trend: 0,  // Pull from daily API
-            image_url: `https://logo.clearbit.com/${row.symbol.toLowerCase()}.com`,  // Fallback
-            description: `${row.name} (${row.symbol}) - ${row['sector'] || 'Unknown Sector'} on ${row['exchange']}`
-          }));
-          try {
-            const { error } = await supabase.from('items').insert(batch).select();
-            if (error) throw error;
-            console.log(`✅ Batched stocks ${i + 1}-${Math.min(i + batchSize, results.length)}`);
-            await new Promise(resolve => setTimeout(resolve, 12000));  // 12s sleep for free tier (500 calls/day)
-          } catch (err) {
-            console.error(`❌ Batch ${i} error:`, err.message);
-          }
-        }
-        fs.unlinkSync('temp_listing_status.csv');  // Cleanup
-        console.log(`✅ Seeded ${results.length} stocks!`);
-        resolve();
-      })
-      .on('error', reject);
+  const csvUrl = `https://www.alphavantage.co/query?function=LISTING_STATUS&apikey=${apiKey}`;
+  const { data: csvData } = await axios.get(csvUrl, { responseType: 'text' });
+  const symbols = [];
+  csvData.split('\n').slice(1).forEach(line => {
+    const [symbol, name, exchange] = line.split(',');
+    if (symbol && name && exchange === 'NASDAQ') symbols.push({ symbol, name });
+    if (symbols.length >= 500) return;
   });
+
+  const techCat = await supabase.from('categories').select('id').eq('slug', 'technology').single();
+  if (!techCat.data) throw new Error('Technology category not found');
+  const items = symbols.map(s => ({
+    slug: s.symbol.toLowerCase(),
+    name: `${s.name} Stock`,
+    category_id: techCat.data.id,
+    teaser_price: 0,
+    trend: 0,
+    image_url: `https://source.unsplash.com/256x256/?${s.name.toLowerCase().split(' ').join('-')},stock`,
+    description: `${s.name} - NASDAQ Listed`
+  }));
+  const { error: itemError } = await supabase
+    .from('items')
+    .upsert(items, { onConflict: 'slug' });
+  if (itemError) throw itemError;
+
+  console.log(`Seeded/Updated ${sectors.length} stock sectors + ${symbols.length} items!`);
 }
 
-// Run seeders sequentially
-async function main() {
-  await seedCrypto();
-  await seedStocks();
-  console.log('🎉 TrackAura DB Seeding Complete—Check Supabase Dashboard for new categories/items!');
-}
-
-main().catch(console.error);
+// Main: Optional Clear + Seed
+(async () => {
+  try {
+    // await clearTables();  // Comment to append
+    await seedCrypto();
+    await seedStocks();
+    console.log('TrackAura Seeding Complete! Check Supabase > Table Editor > categories/items.');
+  } catch (error) {
+    console.error('Seeding Error:', error);
+  }
+})();

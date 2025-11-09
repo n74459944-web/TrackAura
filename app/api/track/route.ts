@@ -1,5 +1,6 @@
 // app/api/track/route.ts
 import { NextRequest, NextResponse } from 'next/server';
+import { getSupabase } from '@/lib/supabase';  // Shared singleton client
 
 interface CategoryItem {
   slug: string;
@@ -15,6 +16,24 @@ interface TrackData {
   specs: { [key: string]: string };
 }
 
+// Supabase types (for mainCat and cachedItem)
+interface Category {
+  id: string;
+  name: string;
+  slug: string;  // FIXED: Added slug for comparison
+  subCategories: { id: string; slug: string; name: string }[];  // Recursive alias
+}
+
+interface Item {
+  id: string;
+  slug: string;
+  name: string;
+  teaser_price: number;
+  description: string;
+  image_url: string;
+  category: string;
+}
+
 export async function POST(request: NextRequest) {
   try {
     const { item, category }: { item?: string; category?: string } = await request.json();
@@ -24,57 +43,83 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Missing item slug' }, { status: 400 });
     }
 
-    // Category teasers (e.g., top-6-crypto)
+    const supabase = getSupabase();  // Shared client—no multi-instance issues
+
+    // Category teasers (e.g., top-6-crypto or top-3-altcoins)
     if (item.startsWith('top-')) {
       const match = item.match(/top-(\d+)-(.+)/);
       if (!match) {
-        return NextResponse.json({ error: 'Invalid teaser format (e.g., top-6-crypto)' }, { status: 400 });
+        return NextResponse.json({ error: 'Invalid teaser format (e.g., top-6-crypto or top-3-altcoins)' }, { status: 400 });
       }
       const num = parseInt(match[1]);
       const teaserCategory = match[2].toLowerCase();
       
-      let staticData;
-      try {
-        const proto = request.headers.get('x-forwarded-proto') || 'http';
-        const host = request.headers.get('host') || 'localhost:3000';
-        const staticDataRes = await fetch(`${proto}://${host}/data/categories.json`);
-        if (!staticDataRes.ok) {
-          console.error('JSON fetch failed:', staticDataRes.status);  // DEBUG: Log for 404s
-          return NextResponse.json({ error: 'Category data unavailable—ensure public/data/categories.json exists' }, { status: 500 });
-        }
-        staticData = await staticDataRes.json();
-      } catch (err) {
-        console.error('JSON load error:', err);
-        return NextResponse.json({ error: 'Category data unavailable' }, { status: 500 });
+      // Find main category with subs (typed response, include slug)
+      const { data: mainCat, error: mainError } = await supabase
+        .from('categories')
+        .select('id, name, slug, subCategories:categories(id, slug, name)')  // FIXED: Explicit slug in select
+        .eq('slug', category || teaserCategory)
+        .single() as { data: Category | null; error: any };
+      if (mainError || !mainCat) {
+        console.log('DEBUG: Main cat missing for', category || teaserCategory);
+        return NextResponse.json({ error: 'Category not found—seed more data?' }, { status: 404 });
       }
 
-      const mainCatData = staticData.categories.find((c: any) => c.name === (category || teaserCategory));
-      if (!mainCatData) {
-        console.log('DEBUG: Main cat missing for', category || teaserCategory, '| Available:', staticData.categories?.map((c: any) => c.name));  // DEBUG: Spill for diagnosis
-        return NextResponse.json({ error: 'Category not found' }, { status: 404 });
-      }
+      let query = supabase
+        .from('items')
+        .select('*')
+        .eq('category_id', mainCat.id)
+        .order('trend', { ascending: false })
+        .limit(num);
 
-      let relatedItems: CategoryItem[] = [];
-      if (teaserCategory === mainCatData.name) {
-        relatedItems = mainCatData.items || [];
-      } else {
-        const subCatData = mainCatData.subCategories?.find((s: any) => s.name === teaserCategory);
-        if (!subCatData) {
-          console.log('DEBUG: Sub cat missing', teaserCategory, 'in main', category);  // DEBUG
+      // Sub-category: Filter to sub's items (typed find)
+      if (teaserCategory !== mainCat.slug) {  // FIXED: Now typed—compares slugs safely
+        const subCat = mainCat.subCategories?.find((s: { slug: string }) => s.slug === teaserCategory);
+        if (!subCat) {
+          console.log('DEBUG: Sub cat missing', teaserCategory, 'in main', category);
           return NextResponse.json({ error: 'Sub-category not found' }, { status: 404 });
         }
-        relatedItems = subCatData.items || [];
+        query = supabase.from('items').select('*').eq('category_id', subCat.id).order('trend', { ascending: false }).limit(num);
       }
 
-      relatedItems = relatedItems.slice(0, num);
-      console.log('API Teaser Return:', { mainCategory: category || teaserCategory, numItems: relatedItems.length });  // DEBUG
+      const { data: relatedItems, error: queryError } = await query as { data: CategoryItem[] | null; error: any };
+      if (queryError || !relatedItems) {
+        console.error('Query error:', queryError);
+        return NextResponse.json({ error: 'Database query failed' }, { status: 500 });
+      }
+
+      console.log('API Teaser Return:', { mainCategory: category || teaserCategory, numItems: relatedItems.length });
 
       return NextResponse.json({ related: relatedItems });
     }
 
-    // Individual items (Grok/mock)
+    // Individual item (Grok/mock + optional DB cache)
     const isDev = process.env.NODE_ENV === 'development';
     const grokApiKey = process.env.GROK_API_KEY;
+
+    // Optional: Check DB cache first (typed response)
+    const { data: cachedItem, error: cacheError } = await supabase
+      .from('items')
+      .select('*')
+      .eq('slug', item)
+      .single() as { data: Item | null; error: any };
+    if (cacheError) {
+      console.error('Cache query error:', cacheError);
+    }
+    if (cachedItem) {
+      console.log('Cache hit for', item);
+      // Return teaser data (expand with Grok history if needed)
+      return NextResponse.json({
+        currentPrice: cachedItem.teaser_price,  // FIXED: Typed access
+        history: [],  // TODO: Cron-fetch history to DB or parallel Grok call
+        specs: {
+          Name: cachedItem.name,  // FIXED: Typed access
+          Description: cachedItem.description,
+          'Image URL': cachedItem.image_url,
+          Category: cachedItem.category || 'general'
+        }
+      });
+    }
 
     if (isDev && !grokApiKey) {
       const mockData: TrackData = {
@@ -94,18 +139,22 @@ export async function POST(request: NextRequest) {
     }
 
     if (!grokApiKey) {
-      return NextResponse.json({ error: 'Grok API key missing—add to .env.local' }, { status: 500 });
+      return NextResponse.json({ error: 'Grok API key missing in .env.local—add it for live item data' }, { status: 500 });
     }
 
-    // Grok prompt (tailored)
-    const isCrypto = category === 'crypto' || ['bitcoin', 'ethereum', 'solana'].includes(item.toLowerCase());
+    // Grok for fresh data (unchanged—strict prompt for JSON)
+    const isCrypto = category === 'crypto' || ['bitcoin', 'ethereum', 'solana', 'tether', 'binancecoin', 'ripple'].includes(item.toLowerCase());
     const categoryPart = category ? ` in category "${category}"` : '';
-    const typePart = isCrypto ? ' (crypto: CoinMarketCap/TradingView for USD + 24h)' : ' (non-crypto: eBay/StockX/Wikimedia)';
-    const grokPrompt = `For "${item}"${categoryPart}${typePart}: Current avg USD price, 30-day history ({ "date": "YYYY-MM-DD", "price": number }). Specs: "Name", "Description" (200 chars), "Image URL" (HTTPS high-res). Output ONLY JSON: { "currentPrice": number, "history": [...], "specs": { ... } }.`;
+    const typePart = isCrypto ? ' (crypto: use CoinMarketCap/TradingView for live USD price + 24h change)' : ' (non-crypto: eBay/StockX/Wiki)';
+    const grokPrompt = `For "${item}"${categoryPart}${typePart}: Fetch current avg USD price, 30-day history (YYYY-MM-DD, USD prices/trends). Key specs: Name, Description (200 chars), Image URL (high-res HTTPS from official/Wikimedia/eBay). 
+Output ONLY valid JSON: { "currentPrice": number, "history": [{ "date": "YYYY-MM-DD", "price": number }], "specs": { "Name": string, "Description": string, "Image URL": string, ... } }. Sources: CoinMarketCap (crypto), eBay/StockX (general). Accurate as of now. Always include Image URL.`;
 
     const grokRes = await fetch('https://api.x.ai/v1/chat/completions', {
       method: 'POST',
-      headers: { 'Authorization': `Bearer ${grokApiKey}`, 'Content-Type': 'application/json' },
+      headers: {
+        'Authorization': `Bearer ${grokApiKey}`,
+        'Content-Type': 'application/json',
+      },
       body: JSON.stringify({
         model: 'grok-3',
         messages: [{ role: 'user', content: grokPrompt }],
@@ -114,29 +163,50 @@ export async function POST(request: NextRequest) {
       }),
     });
 
+    const grokText = await grokRes.text();
+    console.log('Grok Raw Response (first 200 chars):', grokText.substring(0, 200) + '...');
+
     if (!grokRes.ok) {
-      return NextResponse.json({ error: `Grok API error (${grokRes.status})` }, { status: 500 });
+      return NextResponse.json({ 
+        error: `Grok API error (${grokRes.status}): ${grokRes.statusText}. Check https://x.ai/api.` 
+      }, { status: 500 });
     }
 
-    const grokText = await grokRes.text();
     let parsed: TrackData;
     try {
       const grokData = JSON.parse(grokText);
       parsed = JSON.parse(grokData.choices[0].message.content.trim());
     } catch {
-      return NextResponse.json({ error: 'Grok JSON parse failed' }, { status: 500 });
+      return NextResponse.json(
+        { error: 'Grok JSON parse failed—response not structured.' },
+        { status: 500 }
+      );
     }
 
     if (!parsed.currentPrice || !parsed.history?.length || !parsed.specs) {
-      return NextResponse.json({ error: 'Incomplete Grok data' }, { status: 500 });
+      return NextResponse.json(
+        { error: 'Grok data incomplete—try simpler item.' },
+        { status: 500 }
+      );
     }
 
-    // Fallbacks
+    // Fallback image if missing
     if (!parsed.specs['Image URL']) {
-      parsed.specs['Image URL'] = `https://via.placeholder.com/256x256/4F46E5/FFFFFF?text=${item.toUpperCase()}`;
+      parsed.specs['Image URL'] = `https://via.placeholder.com/256x256/4F46E5/FFFFFF?text=${item.replace(/-/g, ' ').toUpperCase()}`;
     }
 
-    parsed.history = parsed.history.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).slice(0, 30);
+    // Trim history to 30 days (sort newest first)
+    parsed.history = parsed.history
+      .filter(h => h.date && !isNaN(new Date(h.date).getTime()))  // Guard invalids
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+      .slice(0, 30);
+
+    // Optional: Cache to DB (uncomment for prod perf)
+    // await supabase.from('items').upsert({ 
+    //   slug: item, 
+    //   teaser_price: parsed.currentPrice,
+    //   ...parsed.specs 
+    // });
 
     return NextResponse.json({
       currentPrice: parsed.currentPrice,
@@ -144,7 +214,10 @@ export async function POST(request: NextRequest) {
       specs: parsed.specs,
     });
   } catch (error) {
-    console.error('TrackAura API Error:', error);
-    return NextResponse.json({ error: 'Server error—check console' }, { status: 500 });
+    console.error('TrackAura API error:', error);
+    return NextResponse.json(
+      { error: 'Server hiccup—check console for details' },
+      { status: 500 }
+    );
   }
 }

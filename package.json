@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "populate": "node scripts/populate.js"
+    "populate": "node scripts/populate.js",
+    "seed": "node scripts/seed.js"
   },
   "dependencies": {
     "@supabase/auth-helpers-nextjs": "^0.10.0",
