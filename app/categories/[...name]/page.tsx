@@ -14,7 +14,9 @@ interface CategoryItem {
 
 export default function CategoryPage() {
   const params = useParams();
-  const category = params?.name as string || 'watches';
+  const pathParts = (params.name as string[] || params.name?.toString().split('/') || []).filter(Boolean);  // e.g., ['crypto', 'altcoins'] or ['crypto']
+  const mainCat = pathParts[0] || 'crypto';  // Fallback to crypto for safety
+  const subCat = pathParts[1];  // Undefined for main cats
   const [items, setItems] = useState<CategoryItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -22,53 +24,41 @@ export default function CategoryPage() {
   useEffect(() => {
     setLoading(true);
     setError('');
-
-    // Handle nested paths like "crypto/altcoins"
-    const pathParts = category.split('/');  // e.g., ['crypto', 'altcoins']
-    const mainCat = pathParts[0];
-    const subCat = pathParts[1];
     const numItems = subCat ? 3 : 6;
     const fetchSlug = `top-${numItems}-${subCat || mainCat}`;
-    console.log('Fetching for', { mainCat, subCat, fetchSlug });  // Enhanced log
+    console.log('Category Fetch Debug:', { pathParts, mainCat, subCat, fetchSlug });
 
     fetch('/api/track', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ 
         item: fetchSlug, 
-        category: mainCat  // Pass main for API fallback if needed
+        category: mainCat  // Pass main for API nested lookup
       }),
     })
       .then(res => {
-        console.log('API Response Status:', res.status); // Log status
+        console.log('API Response Status:', res.status);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
         return res.json();
       })
       .then(data => {
-        console.log('Category Data Received:', data); // Full data log
+        console.log('Category Data Received:', data);
         if (data.error) {
           setError(data.error);
         } else {
           const relatedItems = data.related || [];
-          console.log('Setting items:', relatedItems.length, 'items'); // Log count
+          console.log('Setting items:', relatedItems.length);
           setItems(relatedItems);
         }
       })
       .catch(err => {
-        console.error('Category Fetch Error:', err); // Detailed error
-        setError('Load failed—check console & try refresh?');
+        console.error('Category Fetch Error:', err);
+        setError('Load failed—check console & refresh?');
       })
       .finally(() => setLoading(false));
-  }, [category]);
+  }, [mainCat, subCat]);  // Re-fetch on path change
 
-  // Nested title logic
-  const pathParts = category.split('/');
-  const mainCat = pathParts[0];
-  const subCat = pathParts[1];
-  const title = subCat 
-    ? `${mainCat.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())} > ${subCat.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}`
-    : category.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-
-  if (loading) return <div className="flex justify-center items-center h-64"><p>Loading {category}...</p></div>;
+  if (loading) return <div className="flex justify-center items-center h-64"><p>Loading {mainCat} {subCat ? `> ${subCat}` : ''}...</p></div>;
   if (error) return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 py-12 flex justify-center items-center">
       <div className="text-red-600 flex items-center space-x-2">
@@ -78,19 +68,32 @@ export default function CategoryPage() {
     </div>
   );
 
+  const title = subCat 
+    ? `${mainCat.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())} > ${subCat.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}`
+    : mainCat.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 py-12">
       <div className="max-w-6xl mx-auto px-4">
-        <button onClick={() => window.history.back()} className="mb-6 text-blue-600 hover:underline">← Back to Search</button>
+        <button 
+          onClick={() => window.history.back()} 
+          className="mb-6 text-blue-600 hover:underline flex items-center"
+        >
+          ← Back to {subCat ? 'Category' : 'Search'}
+        </button>
         <h1 className="text-4xl font-bold text-gray-900 capitalize mb-8 text-center">{title}</h1>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {items.map((item) => (
-            <Link key={item.slug} href={`/item/${item.slug}`} className="bg-white rounded-2xl shadow-md hover:shadow-xl transition overflow-hidden">
+            <Link 
+              key={item.slug} 
+              href={`/item/${item.slug}`} 
+              className="bg-white rounded-2xl shadow-md hover:shadow-xl transition overflow-hidden"
+            >
               <img 
                 src={item.image_url} 
                 alt={item.name} 
                 className="w-full h-48 object-cover" 
-                onError={(e) => e.currentTarget.src = `https://via.placeholder.com/384x256?text=${item.name}`} 
+                onError={(e) => e.currentTarget.src = `https://via.placeholder.com/384x256/4F46E5/FFFFFF?text=${item.name.substring(0, 10)}`}
               />
               <div className="p-6">
                 <h3 className="text-xl font-semibold mb-2">{item.name}</h3>
@@ -105,7 +108,9 @@ export default function CategoryPage() {
             </Link>
           ))}
         </div>
-        {items.length === 0 && !loading && !error && <p className="text-center text-gray-500 py-8">No items yet—check console logs for debug info!</p>}
+        {items.length === 0 && !loading && !error && (
+          <p className="text-center text-gray-500 py-8">No items yet—explore more in TrackAura's marketplace!</p>
+        )}
       </div>
     </div>
   );
